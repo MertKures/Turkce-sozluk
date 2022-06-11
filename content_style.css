@@ -1,0 +1,118 @@
+@keyframes animasyon1 {
+    from {
+        width: 1px;
+        height: 1px;
+    }
+    50% {
+        width: 25px;
+        height: 25px;
+    }
+    to {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@keyframes animasyon2 {
+    from {
+        width: 1px;
+        height: 1px;
+    }
+    to {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.ts_kutucukImgAnimasyon {
+    animation-name: animasyon1;
+    animation-iteration-count: 1;
+    animation-duration: 0.25s;
+}
+
+.ts_kutucukDivAnimasyon {
+    animation-name: animasyon2;
+    animation-iteration-count: 1;
+    animation-duration: 0.20s;
+}
+
+.ts_kutucukDiv {
+    width: 30px;
+    height: 30px;
+    position: fixed;
+    cursor: pointer;
+    z-index: 2147483647;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid gray;
+    border-radius: 2px;
+}
+
+.ts_kutucukResmi {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    margin-top: 5px;
+    border-radius: 2px;
+}
+
+.ts_diyalog {
+    border: 1px solid gray;
+    scrollbar-color: rgb(40, 40, 40) rgb(27, 27, 27);
+    scrollbar-width: thin;
+    position: fixed;
+    display: block;
+    z-index: 2147483646;
+    width: 300px;
+    height: 220px;
+    font-family: Gill Sans, sans-serif;
+    font-size: 14px;
+    border-radius: 1em 1em 1em 1em;
+}
+
+.ts_diyalogCM {
+    left: calc(50%);
+    top: calc(50%);
+    transform: translate(-50%, -50%);
+}
+
+.ts_kutucukCM {
+    left: calc(50% - 10px);
+    top: calc(50% + 10px);
+    transform: translate(-50%, -50%);
+}
+
+.ts_kaydirma_cubugu {
+    background-color: #1B1B1B;
+    height: 9%;
+    width: 100%;
+    position: relative;
+    display: block;
+    cursor: pointer;
+    border-radius: 1em 1em 0em 0em;
+}
+
+.ts_bilgiDiv {
+    scrollbar-width: thin;
+    width: 100%;
+    height: 100%;
+    background-color: #141414;
+    color: white;
+    display: inline-block;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: 0em 0em 1em 1em;
+}
+
+.ts_kapamaTusu {
+    width: 10%;
+    cursor: default;
+    height: 100%;
+    color: white;
+    text-align: center;
+    float: right;
+    border-radius: 0.1em 1em 0.1em 0.1em;
+}
+
+.ts_kapamaTusu:hover {
+    background-color: red;
+}

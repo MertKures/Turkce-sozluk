@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css"/>
+    <title>Türkçe sözlük ayarlar sayfası</title>
+</head>
+<body>
+    <div class="main fwh">
+        <div class="optionsDiv fwh">
+            <div class="modifierDiv">
+                <div class="modifierSelectDiv">
+                    <label for="modifierSelect">Sadece bu tuş(lar) basılıyken kutucuğu göster : </label>
+                    <div class="selectDiv inline">
+                        <select id="modifierSelect" name="modifierSelect" selected="none">
+                            <option value="none">NONE</option>
+                            <option value="ctrl">CTRL</option>
+                            <option value="alt">ALT</option>
+                            <option value="shift">SHIFT</option>
+                        </select>
+                    </div>
+                    <div class="modifierButtonDiv inline">
+                        <button id="addModifierButton"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="searchSiteDiv">
+                <label for="searchSiteSelect">Varsayılan kelime arama sitesi : </label>
+                <div class="selectDiv inline">
+                    <select id="searchSiteSelect" name="searchSiteSelect" selected="tdk">
+                        <option value="tdk">TDK</option>
+                        <option value="google">Google</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="blockDiv"></div>
+    </div>
+    <script type="text/javascript" src="index.js" ></script>
+</body>
+</html>

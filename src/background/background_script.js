@@ -1,7 +1,5 @@
 const utils = require('../../modules/utils.js');
 
-//utils.testFunc();
-
 const defaultSettings = { modifiers: ["none"], default: "tdk", searchSelectedTextOnPopupShow: false };
 
 let settings = defaultSettings;
@@ -14,7 +12,7 @@ async function loadSettings() {
 
 loadSettings();
 
-let waitingForbrowserActionToSendAWord = false;
+let waitingBrowserActionToSendAWord = false;
 let objectToSendToBrowserAction = null;
 
 //browserAction portu
@@ -43,7 +41,7 @@ function ContextMenuClicked(info, tab) {
     browser.tabs.sendMessage(tab.id, { type: "SearchFromContextMenu" });
 
     if (info.menuItemId == "cm_onpopup") {
-        waitingForbrowserActionToSendAWord = true;
+        waitingBrowserActionToSendAWord = true;
 
         objectToSendToBrowserAction = { message: { modifiers: info.modifiers, word: info.selectionText.trim() }, type: "SearchFromContextMenu", searchEngine: settings["default"] };
 
@@ -276,12 +274,12 @@ function onConnect(port) {
 
         portbA.name = "bA";
 
-        if (waitingForbrowserActionToSendAWord && objectToSendToBrowserAction) {
+        if (waitingBrowserActionToSendAWord && objectToSendToBrowserAction) {
             portbA.postMessage(objectToSendToBrowserAction);
 
             //console.debug(objectToSendToBrowserAction, "mesajı browserAction'a gönderildi.");
 
-            waitingForbrowserActionToSendAWord = false;
+            waitingBrowserActionToSendAWord = false;
             objectToSendToBrowserAction = null;
         }
 

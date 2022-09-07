@@ -1,5 +1,6 @@
-//https://sozluk.gov.tr/gts?ara=Medeniyet
-//this.readyState === 4 && this.status === 200
+const utils = require('../modules/utils.js');
+
+//utils.testFunc();
 
 const defaultSettings = { modifiers: ["none"], default: "tdk", searchSelectedTextOnPopupShow: false };
 
@@ -58,7 +59,8 @@ try {
         id: "ContextMenuParent",
         title: "Seçili kelimeyi çevir",
         contexts: ["selection"],
-        icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
+        // throws error in chrome.
+        // icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
     });
 
     browser.contextMenus.create({
@@ -125,23 +127,23 @@ function updateSettings(e) {
 function checkSettings() {
     if (!settings) {
         settings = makeSettingsDefault();
-        console.warn("Settings, nesne boş olduğundan varsayılana ayarlandı.");
+        console.debug("Settings, nesne boş olduğundan varsayılana ayarlandı.");
         return;
     }
     
     if (!(settings.default === "tdk" || settings.default === "google")) {
         settings = makeSettingsDefault("default");
-        console.warn("'default' değeri boş olduğundan varsayılana ayarlandı.");
+        console.debug("'default' değeri boş olduğundan varsayılana ayarlandı.");
     }
 
     if ((Array.isArray(settings.modifiers)) ? settings.modifiers.length === 0 : true) {
         settings = makeSettingsDefault("modifiers");
-        console.warn("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
+        console.debug("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
     }
     
-    if (!(settings.searchSelectedTextOnPopupShow === false || settings.searchSelectedTextOnPopupShow === true)) {
+    if (typeof settings.searchSelectedTextOnPopupShow !== "boolean") {
         settings = makeSettingsDefault("searchSelectedTextOnPopupShow");
-        console.warn("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
+        console.debug("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
     }
 }
 

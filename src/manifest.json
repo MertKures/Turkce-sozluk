@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "Turkce sozluk",
   "description": "Istediginiz kelimenin anlamina cift tiklama ile bakin.",
-  "version": "1.7",
+  "version": "1.7.0",
   "icons": {
     "16": "icons/16/icon.png",
     "32": "icons/32/icon.png",
@@ -16,19 +16,22 @@
   },
   "background": {
     "scripts": [
-      "background_script.js"
+      "browser-polyfill.min.js",
+      "background/background.js"
     ]
   },
   "content_scripts": [
     {
+      "all_frames": true,
       "matches": [
         "<all_urls>"
       ],
       "js": [
-        "./content_script.js"
+        "browser-polyfill.min.js",
+        "./content/content.js"
       ],
       "css": [
-        "./content_style.css"
+        "./content/content_style.css"
       ]
     }
   ],
@@ -36,7 +39,7 @@
     "default_icon": {
       "64": "icons/64/icon.png"
     },
-    "default_popup": "browserAction/index.html",
+    "default_popup": "popup/index.html",
     "default_title": "Turkce sozluk"
   },
   "browser_specific_settings": {

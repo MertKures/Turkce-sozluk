@@ -309,7 +309,7 @@
             console.warn("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
         }
         
-        if (!(settings.searchSelectedTextOnPopupShow === false || settings.searchSelectedTextOnPopupShow === true)) {
+        if (typeof settings.searchSelectedTextOnPopupShow !== "boolean") {
             settings = makeSettingsDefault("searchSelectedTextOnPopupShow");
             console.warn("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
         }

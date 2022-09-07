@@ -1,4 +1,4 @@
-const utils = require('../modules/utils.js');
+const utils = require('../../modules/utils.js');
 
 //utils.testFunc();
 

@@ -64,7 +64,7 @@ function checkSettings() {
         console.warn("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
     }
     
-    if (!(settings.searchSelectedTextOnPopupShow === false || settings.searchSelectedTextOnPopupShow === true)) {
+    if (typeof settings.searchSelectedTextOnPopupShow !== "boolean") {
         settings = makeSettingsDefault("searchSelectedTextOnPopupShow");
         console.warn("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
     }
@@ -625,7 +625,7 @@ async function getSelectedTextOnActiveTab() {
 
 console.log(settings["searchSelectedTextOnPopupShow"]);
 
-if (settings["searchSelectedTextOnPopupShow"] == true)
+if (settings["searchSelectedTextOnPopupShow"] === true)
     searchSelectedTextOnActiveTab();
 
 let port = browser.runtime.connect();

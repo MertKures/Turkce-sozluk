@@ -4,9 +4,11 @@
   "description": "Kelimelerin anlamlarını ister çift tıklayarak ister basılı tutup seçerek gösteren uzantı.",
   "main": "src/manifest.json",
   "scripts": {
-    "build": "webpack --config ./webpack.config.js & web-ext lint -s ./dist",
-    "watch": "webpack --config ./webpack.config.js --watch",
-    "package": "npm run build & web-ext build -s ./dist -a ./extension-package/"
+    "watch": "webpack --config ./webpack.config.dev.js --watch",
+    "build-dev": "webpack --config ./webpack.config.dev.js --stats-error-details",
+    "build": "webpack --config ./webpack.config.js",
+    "lint": "web-ext lint -s ./dist",
+    "package": "web-ext build -s ./dist -a ./extension-package/"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,9 @@
   },
   "homepage": "https://github.com/MertKures/Turkce-sozluk#readme",
   "devDependencies": {
+    "@babel/core": "^7.19.0",
+    "@babel/preset-env": "^7.19.0",
+    "babel-loader": "^8.2.5",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "html-webpack-plugin": "^5.5.0",

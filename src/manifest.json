@@ -48,7 +48,8 @@
     }
   },
   "web_accessible_resources": [
-    "icons/64/icon.png"
+    "icons/64/icon.png",
+    "icons/hoparlor.png"
   ],
   "permissions": [
     "https://www.google.com/",

@@ -20,23 +20,24 @@ body
     display:inline-block;
 }
 
-.optionsDiv
-{
+.optionsDiv {
     display: flex;
-    /*Yatay olarak eşitliyor.*/
-  /* justify-content: center; */
-  /*flex-direction:column varken elementleri yatay olarak eşitliyor yokken dikey olarak eşitliyor.*/
-  /* align-items: center; */
-  /* flex-direction: column; */
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-#addModifierButton
-{
-    width: 20px;
-    height: 20px;
+.optionsDiv>div {
+    margin-top: 1em;
+}
+
+.modifierSelectDiv {
+    display: flex;
+}
+
+#addModifierButton {
+    width: 100%;
+    height: 100%;
     background: url("../icons/ekle.png") no-repeat;
     background-size: cover;
     border: none;

@@ -1,4 +1,4 @@
-const utils = require('../../modules/utils.js');
+//const utils = require('../../modules/utils.js');
 
 const defaultSettings = { modifiers: ["none"], default: "tdk", searchSelectedTextOnPopupShow: false };
 
@@ -52,31 +52,41 @@ function ContextMenuClicked(info, tab) {
     }
 }
 
+let parentContextMenuOptions = {
+    id: "ContextMenuParent",
+    title: "Seçili kelimeyi çevir",
+    contexts: ["selection"],
+    // throws error in chrome. "Unexpected property: 'icons'."
+    icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
+};
+
+//Object.getPrototypeOf(error).name === "TypeError" && error.toString().includes("Unexpected property: 'icons'")
+
 try {
-    browser.contextMenus.create({
-        id: "ContextMenuParent",
-        title: "Seçili kelimeyi çevir",
-        contexts: ["selection"],
-        // throws error in chrome.
-        // icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
-    });
+    browser.contextMenus.create(parentContextMenuOptions);
+} catch (hata) {
+    delete parentContextMenuOptions.icons;
 
-    browser.contextMenus.create({
-        id: "cm_onpage",
-        parentId: "ContextMenuParent",
-        title: "Sayfa üzerinde",
-        contexts: ["selection"]
-    });
+    browser.contextMenus.create(parentContextMenuOptions);
 
-    browser.contextMenus.create({
-        id: "cm_onpopup",
-        parentId: "ContextMenuParent",
-        title: "Uzantı üzerinde",
-        contexts: ["selection"]
-    });
+    console.log("Successfully created context menu !");
+}
 
-    browser.contextMenus.onClicked.addListener(ContextMenuClicked);
-} catch (hata) { console.error(hata); }
+browser.contextMenus.create({
+    id: "cm_onpage",
+    parentId: "ContextMenuParent",
+    title: "Sayfa üzerinde",
+    contexts: ["selection"]
+});
+
+browser.contextMenus.create({
+    id: "cm_onpopup",
+    parentId: "ContextMenuParent",
+    title: "Uzantı üzerinde",
+    contexts: ["selection"]
+});
+
+browser.contextMenus.onClicked.addListener(ContextMenuClicked);
 
 function sendMessageToTab(message, sender) {
     browser.tabs.sendMessage(sender.tab.id, message);
@@ -128,7 +138,7 @@ function checkSettings() {
         console.debug("Settings, nesne boş olduğundan varsayılana ayarlandı.");
         return;
     }
-    
+
     if (!(settings.default === "tdk" || settings.default === "google")) {
         settings = makeSettingsDefault("default");
         console.debug("'default' değeri boş olduğundan varsayılana ayarlandı.");
@@ -138,7 +148,7 @@ function checkSettings() {
         settings = makeSettingsDefault("modifiers");
         console.debug("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
     }
-    
+
     if (typeof settings.searchSelectedTextOnPopupShow !== "boolean") {
         settings = makeSettingsDefault("searchSelectedTextOnPopupShow");
         console.debug("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");

@@ -82,23 +82,23 @@ function fixSettings(_settings) {
     if (!settings) {
         settings = {};
         copyObj(defaultSettings, settings);
-        console.warn("Settings, nesne boş olduğundan varsayılana ayarlandı.");
+        console.debug("Settings, nesne boş olduğundan varsayılana ayarlandı.");
         return settings;
     }
     
     if (!(settings.default === "tdk" || settings.default === "google")) {
         settings = makeSettingsDefault(settings, "default");
-        console.warn("'default' değeri boş olduğundan varsayılana ayarlandı.");
+        console.debug("'default' değeri boş olduğundan varsayılana ayarlandı.");
     }
 
     if ((Array.isArray(settings.modifiers)) ? settings.modifiers.length === 0 : true) {
         settings = makeSettingsDefault(settings, "modifiers");
-        console.warn("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
+        console.debug("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
     }
     
     if (!(settings.searchSelectedTextOnPopupShow === false || settings.searchSelectedTextOnPopupShow === true)) {
         settings = makeSettingsDefault(settings, "searchSelectedTextOnPopupShow");
-        console.warn("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
+        console.debug("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
     }
 
     return settings;
@@ -123,9 +123,8 @@ function makeSettingsDefault(_settings, ...properties) {
 }
 
 function addModifierSelectElement(modifier, appendChild = true, save = true) {
-    if (currentModifierCount === modifierCount)
-    {
-        console.warn("Modifier count reached the limit.Which is " + modifierCount);
+    if (currentModifierCount === modifierCount) {
+        console.debug("Modifier count reached the limit.Which is " + modifierCount);
         return;
     }
     else if (currentModifierCount > modifierCount)
@@ -223,7 +222,7 @@ function searchEngineSelectOnInput(e) {
 }
 
 function Save() {
-    console.warn("Save çağırıldı !");
+    console.debug("Save çağırıldı !");
 
     //Prevent user to select anything until the process is done.
     blockDiv.style.visibility = "visible";
@@ -232,7 +231,7 @@ function Save() {
 
     browser.storage.local.set(objects);
 
-    console.warn("Kaydedilen ayarlar", objects);
+    console.debug("Kaydedilen ayarlar", objects);
 
     blockDiv.style.visibility = "hidden";
 }
@@ -250,7 +249,7 @@ function getSaveObjects() {
         if (modifierSelect.value)
             objects.modifiers.push(modifierSelect.value);
         else
-            console.warn("Ayarlar kaydedilirken modifierSelect değişkenlerinden birinin \"value\" özelliği boştu.");
+            console.debug("Ayarlar kaydedilirken modifierSelect değişkenlerinden birinin \"value\" özelliği boştu.");
 
     objects.default = searchEngineSelect.value;
 

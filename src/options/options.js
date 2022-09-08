@@ -194,7 +194,9 @@ function addModifierOptions(select, modifiers) {
 
 function copyObj(from, to) {
     for (let key in from) {
-        to[key] = from[key];
+        let obj = from[key];
+        //We don't want to pass old reference to the array.
+        to[key] = Array.isArray(obj) ? Array.from(obj) : obj;
     }
     return to;
 }

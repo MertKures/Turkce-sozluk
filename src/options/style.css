@@ -53,12 +53,10 @@ body
     background-color: rgba(80,80,80,20);
 }
 
-.addModifierButtonDiv
-{
-    /*Bilmediğim bir sebepten dolayı buton yüksekliğin çeyreği kadar aşağıda oluyor.O yüzden 
-    eşitlemek için çeyreği kadar yukarı çektim.*/
-    position:relative;
-    top:-5px;
+.modifierButtonDiv {
+    min-width: 32px;
+    min-height: 32px;
+    margin-left: 0.5em;
 }
 
 #blockDiv

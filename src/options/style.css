@@ -76,3 +76,7 @@ body
     display: contents;
 }
 
+select {
+    max-width: calc(75%);
+    margin-left: 0.5em;
+}

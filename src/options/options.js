@@ -245,6 +245,7 @@ function getSaveObjects() {
     
     copyObj(defaultSettings, objects);
 
+    modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
     for (modifierSelect of modifierSelects)
         if (modifierSelect.value)
             objects.modifiers.push(modifierSelect.value);

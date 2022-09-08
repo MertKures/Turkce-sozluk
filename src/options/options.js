@@ -261,8 +261,6 @@ function onlyUnique(value, index, self) {
 }
 
 function getSaveObjects() {
-    console.log("Default settings - getSaveObjects - Baslangic: ", defaultSettings);
-
     let objects = {};
     
     copyObj(defaultSettings, objects);
@@ -283,8 +281,6 @@ function getSaveObjects() {
     if (objects.modifiers.length > 1) {
         objects.modifiers = objects.modifiers.filter(modifier => modifier != "none");
     }
-
-    console.log("Default settings - getSaveObjects - Son:", defaultSettings);
 
     return objects;
 }

@@ -211,27 +211,8 @@ function findKeyOfValueInDictionary(dict, value) {
 
 function modifierSelectOnInput(e) {
     if (this.value === "none" && currentModifierCount > 1) {
-        //let key = findKeyOfValueInDictionary(modifierSelects, this);
-
-        this.remove();
         modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
         currentModifierCount--;
-
-        // let element = modifierSelects[this.id];
-
-        // if (element)
-        // {
-        //     element.remove();
-        //     currentModifierCount--;
-        // }
-
-        // if (key) {
-        //     modifierSelects[key].remove();
-        //     this.remove();
-        //     currentModifierCount--;
-        // } else {
-        //     console.error("NONE yapıldıktan sonra element silinemedi çünkü listede bulunamadı.");
-        // }
     }
 
     Save();

@@ -30,7 +30,7 @@ searchSelectedTextOnPopupShowInput.oninput = searchSelectedTextOnPopupShowInputO
 
 const modifierCount = 3;
 let currentModifierCount = 1;
-const modifierKeys = ["ctrl", "alt", "shift", "none"];
+const modifierKeys = Object.freeze(["ctrl", "alt", "shift", "none"]);
 let modifierList = [];
 
 async function loadSettings() {

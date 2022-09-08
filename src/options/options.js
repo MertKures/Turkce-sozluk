@@ -153,6 +153,8 @@ function addModifierSelectElement(modifier, appendChild = true, save = true) {
     if (appendChild) {
         selectDiv.appendChild(select);
 
+        modifierSelects.push(select);
+
         currentModifierCount++;
 
         if (save)

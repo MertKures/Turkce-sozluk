@@ -71,3 +71,8 @@ body
     background-color: rgba(30, 30, 30, 0.75);
     visibility: hidden;
 }
+
+.selectDiv {
+    display: contents;
+}
+

@@ -212,6 +212,7 @@ function modifierSelectOnInput(e) {
         //let key = findKeyOfValueInDictionary(modifierSelects, this);
 
         this.remove();
+        modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
         currentModifierCount--;
 
         // let element = modifierSelects[this.id];

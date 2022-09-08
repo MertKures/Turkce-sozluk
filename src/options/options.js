@@ -10,7 +10,7 @@ let blockDiv = document.getElementById("blockDiv");
 
 let selectDiv = document.getElementsByClassName("selectDiv")[0];
 
-let modifierSelects = selectDiv.getElementsByTagName("select");
+let modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
 
 for (select of modifierSelects) {
     select.oninput = modifierSelectOnInput;

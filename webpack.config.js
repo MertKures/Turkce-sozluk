@@ -18,14 +18,14 @@ const htmlWebpackMinifyProperty = {
     caseSensitive: true
 };
 
-//relative to ${process.cwd()}/src/
+//relative to context (src) folder
 const copyWebpackPluginOptions = new CopyWebpackPlugin({
     patterns: [
         {
             from: './**/*',
             to: '../dist',
             globOptions: {
-                ignore: ['**/node_modules/*', '**/template.html']
+                ignore: ['**/node_modules/*', '**/*.html', '**/*.js']
             },
             toType: 'dir'
         },
@@ -33,38 +33,68 @@ const copyWebpackPluginOptions = new CopyWebpackPlugin({
             from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
             to: '../dist/browser-polyfill.min.js',
             toType: 'file'
+        },
+        {
+            from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js.map',
+            to: '../dist/browser-polyfill.min.js.map',
+            toType: 'file'
         }
     ]
 });
 
-//relative to output.path
+//relative to output.path (clears 'dist' folder)
 const cleanWebpackPluginOptions = new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: './**/*' });
 
 const htmlWebpackPluginOptions = [
     new HtmlWebpackPlugin({
-        filename: path.resolve('dist/browserAction/index.html'),
+        filename: path.resolve(__dirname, 'dist/popup/index.html'),
         title: 'Popup',
-        minify: htmlWebpackMinifyProperty,
-        template: path.resolve('src/browserAction/template.html')
+        template: path.resolve(__dirname, 'src/popup/index.html'),
+        //Only popup.js loaded to html
+        chunks: ["popup"],
+        minify: htmlWebpackMinifyProperty
     }),
     new HtmlWebpackPlugin({
-        filename: path.resolve('dist/options/index.html'),
+        filename: path.resolve(__dirname, 'dist/options/index.html'),
         title: 'Options',
-        minify: htmlWebpackMinifyProperty,
-        template: path.resolve('src/options/template.html')
+        template: path.resolve(__dirname, 'src/options/index.html'),
+        //Only options.js loaded to html
+        chunks: ["options"],
+        minify: htmlWebpackMinifyProperty
     })
 ];
 
 const moduleExports = {
-    context: path.resolve('src'),
+    context: path.resolve(__dirname, 'src'),
     output: {
-        path: path.resolve('dist')
+        path: path.resolve(__dirname, 'dist'),
+        //like options/options.js ...
+        filename: "[name]/[name].js"
     },
-    entry: {},
+    resolve: {
+        //can be used with require('')
+        modules: [path.resolve(__dirname, 'modules/utils.js')]
+    },
+    entry: {
+        options: path.resolve(__dirname, 'src/options/options.js'),
+        popup: path.resolve(__dirname, 'src/popup/popup.js'),
+        background: path.resolve(__dirname, 'src/background/background.js'),
+        content: path.resolve(__dirname, 'src/content/content.js')
+    },
     mode: 'production',
     plugins: [copyWebpackPluginOptions, cleanWebpackPluginOptions, ...htmlWebpackPluginOptions],
-    optimization: {
-        minimize: true
+    module:
+    {
+        rules: [
+            {
+                loader: "babel-loader",
+                exclude: /node_modules/,
+                test: /\.js$/,
+                resolve: {
+                    extensions: [".js"]
+                }
+            }
+        ]
     }
 };
 

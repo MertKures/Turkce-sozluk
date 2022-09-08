@@ -2,7 +2,7 @@
  * 
  */
 
-const defaultSettings = { modifiers: ["none"], default: "tdk", searchSelectedTextOnPopupShow: false };
+const defaultSettings = Object.freeze({ modifiers: Object.freeze(["none"]), default: "tdk", searchSelectedTextOnPopupShow: false });
 
 let modifierSelectIDCounter = 1;
 

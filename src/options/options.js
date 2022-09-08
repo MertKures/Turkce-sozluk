@@ -16,6 +16,7 @@ for (select of modifierSelects) {
     select.oninput = modifierSelectOnInput;
 }
 
+//img
 let addModifierButton = document.getElementById("addModifierButton");
 
 let searchEngineSelect = document.getElementById("searchEngineSelect");
@@ -85,7 +86,7 @@ function fixSettings(_settings) {
         console.debug("Settings, nesne boş olduğundan varsayılana ayarlandı.");
         return settings;
     }
-    
+
     if (!(settings.default === "tdk" || settings.default === "google")) {
         settings = makeSettingsDefault(settings, "default");
         console.debug("'default' değeri boş olduğundan varsayılana ayarlandı.");
@@ -95,7 +96,7 @@ function fixSettings(_settings) {
         settings = makeSettingsDefault(settings, "modifiers");
         console.debug("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
     }
-    
+
     if (!(settings.searchSelectedTextOnPopupShow === false || settings.searchSelectedTextOnPopupShow === true)) {
         settings = makeSettingsDefault(settings, "searchSelectedTextOnPopupShow");
         console.debug("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
@@ -107,8 +108,7 @@ function fixSettings(_settings) {
 function makeSettingsDefault(_settings, ...properties) {
     let settings = _settings;
 
-    if (properties.length === 0)
-    {
+    if (properties.length === 0) {
         settings = {};
         copyObj(defaultSettings, settings);
     }
@@ -134,7 +134,7 @@ function addModifierSelectElement(modifier, appendChild = true, save = true) {
         currentModifierCount = modifierSelects.length;
 
         for (let i = modifierCount;i < currentModifierCount;i++) {
-        modifierSelects.pop();
+            modifierSelects.pop();
         }
     }
 
@@ -224,6 +224,7 @@ function modifierSelectOnInput(e) {
         currentModifierCount--;
     }
 
+    //"modifierSelects" is being updated in here so we didn't updated it again inside the if block.
     Save();
 }
 
@@ -252,10 +253,11 @@ function onlyUnique(value, index, self) {
 
 function getSaveObjects() {
     let objects = {};
-    
+
     copyObj(defaultSettings, objects);
 
     modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
+
     for (modifierSelect of modifierSelects)
         if (modifierSelect.value)
             objects.modifiers.push(modifierSelect.value);

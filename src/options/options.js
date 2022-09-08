@@ -128,7 +128,15 @@ function addModifierSelectElement(modifier, appendChild = true, save = true) {
         return;
     }
     else if (currentModifierCount > modifierCount)
+    {
+        modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
+
+        currentModifierCount = modifierSelects.length;
+
+        for (let i = modifierCount;i < currentModifierCount;i++) {
         modifierSelects.pop();
+        }
+    }
 
     let select = document.createElement("select");
 

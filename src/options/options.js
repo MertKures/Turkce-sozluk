@@ -212,6 +212,7 @@ function findKeyOfValueInDictionary(dict, value) {
 function modifierSelectOnInput(e) {
     if (this.value === "none" && currentModifierCount > 1) {
         modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
+        this.remove();
         currentModifierCount--;
     }
 

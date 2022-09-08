@@ -63,9 +63,9 @@ const moduleExports = {
         options: path.resolve(__dirname, 'src/options/options.js'),
         popup: path.resolve(__dirname, 'src/popup/popup.js'),
         background: path.resolve(__dirname, 'src/background/background.js'),
-        content: path.resolve(__dirname, 'src/content/content_script.js')
+        content: path.resolve(__dirname, 'src/content/content.js')
     },
-    //prevents csp (Content Security Policy) error in background_script.js by not using eval()
+    //prevents csp (Content Security Policy) error in background.js by not using eval()
     devtool: "source-map",
     mode: 'development',
     plugins: [copyWebpackPluginOptions, cleanWebpackPluginOptions, ...htmlWebpackPluginOptions],

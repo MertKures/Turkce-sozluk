@@ -2,7 +2,7 @@
  * 
  */
 
-const defaultSettings = { modifiers: ["none"], default: "tdk", searchSelectedTextOnPopupShow: false };
+const defaultSettings = Object.freeze({ modifiers: Object.freeze(["none"]), default: "tdk", searchSelectedTextOnPopupShow: false });
 
 let modifierSelectIDCounter = 1;
 
@@ -10,12 +10,13 @@ let blockDiv = document.getElementById("blockDiv");
 
 let selectDiv = document.getElementsByClassName("selectDiv")[0];
 
-let modifierSelects = selectDiv.getElementsByTagName("select");
+let modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
 
 for (select of modifierSelects) {
     select.oninput = modifierSelectOnInput;
 }
 
+//img
 let addModifierButton = document.getElementById("addModifierButton");
 
 let searchEngineSelect = document.getElementById("searchEngineSelect");
@@ -30,7 +31,7 @@ searchSelectedTextOnPopupShowInput.oninput = searchSelectedTextOnPopupShowInputO
 
 const modifierCount = 3;
 let currentModifierCount = 1;
-const modifierKeys = ["ctrl", "alt", "shift", "none"];
+const modifierKeys = Object.freeze(["ctrl", "alt", "shift", "none"]);
 let modifierList = [];
 
 async function loadSettings() {
@@ -82,23 +83,23 @@ function fixSettings(_settings) {
     if (!settings) {
         settings = {};
         copyObj(defaultSettings, settings);
-        console.warn("Settings, nesne boş olduğundan varsayılana ayarlandı.");
+        console.debug("Settings, nesne boş olduğundan varsayılana ayarlandı.");
         return settings;
     }
-    
+
     if (!(settings.default === "tdk" || settings.default === "google")) {
         settings = makeSettingsDefault(settings, "default");
-        console.warn("'default' değeri boş olduğundan varsayılana ayarlandı.");
+        console.debug("'default' değeri boş olduğundan varsayılana ayarlandı.");
     }
 
     if ((Array.isArray(settings.modifiers)) ? settings.modifiers.length === 0 : true) {
         settings = makeSettingsDefault(settings, "modifiers");
-        console.warn("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
+        console.debug("'modifiers' dizisi boş olduğundan varsayılana ayarlandı.");
     }
-    
+
     if (!(settings.searchSelectedTextOnPopupShow === false || settings.searchSelectedTextOnPopupShow === true)) {
         settings = makeSettingsDefault(settings, "searchSelectedTextOnPopupShow");
-        console.warn("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
+        console.debug("'searchSelectedTextOnPopupShow' değeri boş olduğundan varsayılana ayarlandı.");
     }
 
     return settings;
@@ -107,8 +108,7 @@ function fixSettings(_settings) {
 function makeSettingsDefault(_settings, ...properties) {
     let settings = _settings;
 
-    if (properties.length === 0)
-    {
+    if (properties.length === 0) {
         settings = {};
         copyObj(defaultSettings, settings);
     }
@@ -123,13 +123,20 @@ function makeSettingsDefault(_settings, ...properties) {
 }
 
 function addModifierSelectElement(modifier, appendChild = true, save = true) {
-    if (currentModifierCount === modifierCount)
-    {
-        console.warn("Modifier count reached the limit.Which is " + modifierCount);
+    if (currentModifierCount === modifierCount) {
+        console.debug("Modifier count reached the limit.Which is " + modifierCount);
         return;
     }
     else if (currentModifierCount > modifierCount)
-        modifierSelects.pop();
+    {
+        modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
+
+        currentModifierCount = modifierSelects.length;
+
+        for (let i = modifierCount;i < currentModifierCount;i++) {
+            modifierSelects.pop();
+        }
+    }
 
     let select = document.createElement("select");
 
@@ -145,6 +152,8 @@ function addModifierSelectElement(modifier, appendChild = true, save = true) {
 
     if (appendChild) {
         selectDiv.appendChild(select);
+
+        modifierSelects.push(select);
 
         currentModifierCount++;
 
@@ -194,7 +203,9 @@ function addModifierOptions(select, modifiers) {
 
 function copyObj(from, to) {
     for (let key in from) {
-        to[key] = from[key];
+        let obj = from[key];
+        //We don't want to pass old reference to the array.
+        to[key] = Array.isArray(obj) ? Array.from(obj) : obj;
     }
     return to;
 }
@@ -209,28 +220,11 @@ function findKeyOfValueInDictionary(dict, value) {
 
 function modifierSelectOnInput(e) {
     if (this.value === "none" && currentModifierCount > 1) {
-        //let key = findKeyOfValueInDictionary(modifierSelects, this);
-
         this.remove();
         currentModifierCount--;
-
-        // let element = modifierSelects[this.id];
-
-        // if (element)
-        // {
-        //     element.remove();
-        //     currentModifierCount--;
-        // }
-
-        // if (key) {
-        //     modifierSelects[key].remove();
-        //     this.remove();
-        //     currentModifierCount--;
-        // } else {
-        //     console.error("NONE yapıldıktan sonra element silinemedi çünkü listede bulunamadı.");
-        // }
     }
 
+    //"modifierSelects" is being updated in here so we didn't updated it again inside the if block.
     Save();
 }
 
@@ -239,7 +233,7 @@ function searchEngineSelectOnInput(e) {
 }
 
 function Save() {
-    console.warn("Save çağırıldı !");
+    console.debug("Save çağırıldı !");
 
     //Prevent user to select anything until the process is done.
     blockDiv.style.visibility = "visible";
@@ -248,7 +242,7 @@ function Save() {
 
     browser.storage.local.set(objects);
 
-    console.warn("Kaydedilen ayarlar", objects);
+    console.debug("Kaydedilen ayarlar", objects);
 
     blockDiv.style.visibility = "hidden";
 }
@@ -258,17 +252,17 @@ function onlyUnique(value, index, self) {
 }
 
 function getSaveObjects() {
-    console.log("Default settings - getSaveObjects - Baslangic: ", defaultSettings);
-
     let objects = {};
-    
+
     copyObj(defaultSettings, objects);
+
+    modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
 
     for (modifierSelect of modifierSelects)
         if (modifierSelect.value)
             objects.modifiers.push(modifierSelect.value);
         else
-            console.warn("Ayarlar kaydedilirken modifierSelect değişkenlerinden birinin \"value\" özelliği boştu.");
+            console.debug("Ayarlar kaydedilirken modifierSelect değişkenlerinden birinin \"value\" özelliği boştu.");
 
     objects.default = searchEngineSelect.value;
 
@@ -280,8 +274,6 @@ function getSaveObjects() {
     if (objects.modifiers.length > 1) {
         objects.modifiers = objects.modifiers.filter(modifier => modifier != "none");
     }
-
-    console.log("Default settings - getSaveObjects - Son:", defaultSettings);
 
     return objects;
 }

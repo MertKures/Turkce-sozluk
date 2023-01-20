@@ -16,8 +16,10 @@
   },
   "keywords": [
     "web-extension",
-    "Türkçe",
-    "Sözlük"
+    "türkçe",
+    "sözlük",
+    "turkce",
+    "sozluk"
   ],
   "author": "Mert Kureş",
   "license": "MIT",
@@ -26,15 +28,15 @@
   },
   "homepage": "https://github.com/MertKures/Turkce-sozluk#readme",
   "devDependencies": {
-    "@babel/core": "^7.19.0",
-    "@babel/preset-env": "^7.19.0",
-    "babel-loader": "^8.2.5",
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "babel-loader": "^8.3.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "html-webpack-plugin": "^5.5.0",
-    "web-ext": "^7.2.0",
+    "web-ext": "^0.0.1",
     "webextension-polyfill": "^0.10.0",
-    "webpack": "^5.74.0",
+    "webpack": "^5.75.0",
     "webpack-cli": "^4.10.0"
   }
 }

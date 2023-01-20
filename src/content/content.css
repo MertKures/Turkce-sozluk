@@ -1,4 +1,4 @@
-@keyframes animasyon1 {
+@keyframes animation1 {
     from {
         width: 1px;
         height: 1px;
@@ -13,7 +13,7 @@
     }
 }
 
-@keyframes animasyon2 {
+@keyframes animation2 {
     from {
         width: 1px;
         height: 1px;
@@ -24,19 +24,19 @@
     }
 }
 
-.ts_kutucukImgAnimasyon {
-    animation-name: animasyon1;
+.ts_boxImgAnimation {
+    animation-name: animation1;
     animation-iteration-count: 1;
     animation-duration: 0.25s;
 }
 
-.ts_kutucukDivAnimasyon {
-    animation-name: animasyon2;
+.ts_boxDivAnimation {
+    animation-name: animation2;
     animation-iteration-count: 1;
     animation-duration: 0.20s;
 }
 
-#ts_kutucuk {
+#ts_box {
     width: 30px;
     height: 30px;
     position: fixed;
@@ -50,7 +50,7 @@
     align-items: center;
 }
 
-.ts_kutucukResmi {
+.ts_boxImg {
     width: 66.6%;
     border-radius: 2px;
     margin: 0;
@@ -66,7 +66,7 @@
     z-index: 2147483646;
     width: 300px;
     height: 220px;
-    font-family: Gill Sans, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
     border-radius: 1em 1em 1em 1em;
     line-height: 1em;
@@ -78,13 +78,13 @@
     transform: translate(-50%, -50%);
 }
 
-.ts_kutucukCM {
+.ts_boxCM {
     left: calc(50% - 10px);
     top: calc(50% + 10px);
     transform: translate(-50%, -50%);
 }
 
-.ts_kaydirma_cubugu {
+.ts_dragDiv {
     background-color: #1B1B1B;
     height: 9%;
     width: 100%;
@@ -94,7 +94,7 @@
     border-radius: 1em 1em 0em 0em;
 }
 
-.ts_bilgiDiv {
+.ts_infoWrapper {
     scrollbar-width: thin;
     width: 100%;
     height: 91%;
@@ -106,7 +106,7 @@
     border-radius: 0em 0em 1em 1em;
 }
 
-.ts_kapamaTusu {
+.ts_closeButton {
     width: 10%;
     cursor: default;
     height: 100%;
@@ -116,12 +116,17 @@
     border-radius: 0.1em 1em 0.1em 0.1em;
 }
 
-.ts_kapamaTusu:hover {
+.ts_closeButton:hover {
     background-color: red;
 }
 
-.P_Anlamyeri {
+.ts_info {
     text-align: left !important;
     margin: 0;
     padding: 0;
+}
+
+.ts_similarWord {
+    font-size: 0.75em;
+    color: gray;
 }

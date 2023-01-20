@@ -8,32 +8,32 @@
 </head>
 
 <body>
-    <div id="SecenekKapsayici">
-        <div id="TDK">TDK</div>
-        <div id="Sınır"></div>
-        <div id="Google">Google</div>
+    <div id="search_engines">
+        <div id="search_engine_tdk_option">TDK</div>
+        <div id="search_engine_seperator"></div>
+        <div id="search_engine_google_option">Google</div>
     </div>
-    <div id="GoogleKapsayici">
-        <div id="gicerik">
-            <div id="gcevirilecekTAKapsayici">
-                <label id="gKelime">Kelime :</label>
-                <input id="gcevirilecekTA">
-                <label id="gAnlamı">Anlamı :</label>
+    <div id="search_engine_google_div">
+        <div class="content_wrapper">
+            <div class="content">
+                <label class="word">Kelime :</label>
+                <div class="search_engine_input_div" id="input_google_div">
+                    <input id="input_google">
+                </div>
+                <label class="meaning">Anlamı :</label>
+                <div class="search_engine_result_div" id="google_result_div"></div>
             </div>
-            <div id="gcevirilenAlan"></div>
         </div>
     </div>
-    <div id="TDKKapsayici">
-        <div id="icerikKapsayici">
-            <div id="icerik">
-                <div id="ickisim">
-                    <label id="Kelime">Kelime :</label>
-                    <div id="cevirilecekAlan">
-                        <input id="cevirilecekTA">
-                    </div>
-                    <label id="Anlam">Anlamı :</label>
-                    <div id="cevirilenAlan"></div>
+    <div id="search_engine_tdk_div">
+        <div class="content_wrapper">
+            <div class="content">
+                <label class="word">Kelime :</label>
+                <div class="search_engine_input_div" id="input_tdk_div">
+                    <input id="input_tdk">
                 </div>
+                <label class="meaning">Anlamı :</label>
+                <div class="search_engine_result_div" id="tdk_result_div"></div>
             </div>
         </div>
     </div>

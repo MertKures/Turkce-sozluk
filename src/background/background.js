@@ -11,11 +11,9 @@ initializeSettings()
     });
 //#endregion
 
-let waitingBrowserActionToSendAWord = false;
-let objectToSendToBrowserAction = null;
-
-//browserAction portu
-let portbA = null;
+let isWaitingForThePopupToLoadToSendAWord = false;
+let objectToBeSentToPopupWhenLoaded = null;
+let popupPort = null;
 
 //Sends meaning of the word that came from context menu.
 function sendContextMenuSelectedTextToTab(info, tab) {
@@ -25,9 +23,9 @@ function sendContextMenuSelectedTextToTab(info, tab) {
 //async olursa browserAction açılmıyor.
 function ContextMenuClicked(info, tab) {
     if (info.menuItemId == "cm_onpopup") {
-        waitingBrowserActionToSendAWord = true;
+        isWaitingForThePopupToLoadToSendAWord = true;
 
-        objectToSendToBrowserAction = { word: info.selectionText.trim(), type: "SearchFromContextMenu", searchEngine: settings["default"] };
+        objectToBeSentToPopupWhenLoaded = { word: info.selectionText.trim(), type: "SearchFromContextMenu", searchEngine: settings["default"] };
 
         browser.browserAction.openPopup();
     } else if (info.menuItemId == "cm_onpage")
@@ -184,28 +182,28 @@ async function onMessage(message, sender) {
 function onConnect(port) {
     //browserAction
     if (port.sender.envType == "addon_child") {
-        if (portbA) {
-            portbA.disconnect();
-            portbA = null;
+        if (popupPort) {
+            popupPort.disconnect();
+            popupPort = null;
         }
 
-        portbA = port;
+        popupPort = port;
 
-        portbA.name = "bA";
+        popupPort.name = "bA";
 
-        if (waitingBrowserActionToSendAWord && objectToSendToBrowserAction) {
-            portbA.postMessage(objectToSendToBrowserAction);
+        if (isWaitingForThePopupToLoadToSendAWord && objectToBeSentToPopupWhenLoaded) {
+            popupPort.postMessage(objectToBeSentToPopupWhenLoaded);
 
-            waitingBrowserActionToSendAWord = false;
-            objectToSendToBrowserAction = null;
+            isWaitingForThePopupToLoadToSendAWord = false;
+            objectToBeSentToPopupWhenLoaded = null;
         }
         else {
-            portbA.postMessage({
+            popupPort.postMessage({
                 type: "PopupConnectedToBackground"
             });
         }
 
-        portbA.onDisconnect.addListener(onDisconnect);
+        popupPort.onDisconnect.addListener(onDisconnect);
 
         return;
     }
@@ -215,7 +213,7 @@ function onDisconnect(port) {
     console.debug(port, "'" + port.name + "' portuyla bağlantı koptu.", (port.error) ? "Error: " + port.error : "");
 
     if (port.name === "bA")
-        portbA = null;
+        popupPort = null;
 }
 
 browser.runtime.onConnect.addListener(onConnect);

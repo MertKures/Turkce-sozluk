@@ -74,7 +74,7 @@ function updateSettings(e) {
         settings[key] = e[key].newValue;
 }
 
-async function SearchFromTDK(message, sender) {
+async function SearchFromTDK(message) {
     let word = message.word ?? message;
 
     let response = await fetch("https://sozluk.gov.tr/gts?ara=" + word, {

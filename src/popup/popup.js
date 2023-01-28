@@ -90,7 +90,6 @@ async function initialize() {
             input_tdk.focus({ focusVisible: true });
         });
 
-
         // This will trigger observer, then focus the input element.
         search_engine_tdk_div.hidden = false;
     };
@@ -99,14 +98,12 @@ async function initialize() {
 
     port.onMessage.addListener(portOnMessage);
 
-    //#region popup.js > Varsayılan olan arama motoruna geçiş yapıp odaklanmak.
     changeView(settings["default"]);
 
     if (settings["default"] == searchEngineList.tdk)
         input_tdk.focus({ focusVisible: true });
     else
         input_google.focus({ focusVisible: true });
-    //#endregion
 }
 
 async function searchAfterDelay() {
@@ -141,36 +138,28 @@ async function searchAfterDelay() {
             return;
         }
 
-        Search(input);
+        search(input);
     } catch (error) {
         console.error(error);
     }
 }
 
 function createTDKUI(message, parentElement) {
-    //console.debug(message);
-
-    //message.word trim'lenmiş ve küçük harflerle geliyor.
-    if (!message.word) {
+    if (!message.word)
         return;
-    }
-    else if (!message.anlamlarListe) {
+    else if (!message.anlamlarListe)
         return;
-    }
-    else if (message.anlamlarListe.length <= 0) {
+    else if (message.anlamlarListe.length <= 0)
         return;
-    }
 
-    //İlk önce kelimeyi yazalım.
+    let boldWordElement = createElement("b", 1, { "textContent": message.word.charAt(0).toUpperCase() + message.word.slice(1) });
 
-    let ustKelime = createElement("b", 1, { "textContent": message.word.charAt(0).toUpperCase() + message.word.slice(1) });
-
-    if (!ustKelime) {
+    if (!boldWordElement) {
         console.error("Kelimenin en üste yazıldığı kısımda \"b\" elementi oluşturulamadı.");
         return;
     }
 
-    parentElement.appendChild(ustKelime);
+    parentElement.appendChild(boldWordElement);
 
     addElements(parentElement, createElement("br", 2));
 
@@ -295,9 +284,8 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
 
     let word = query.textContent;
 
-    if (word.trim().toLocaleLowerCase() === "ne demek?") {
+    if (word.trim().toLocaleLowerCase() === "ne demek?")
         throw "Geçersiz kelime seçildiğinden sadece 'ne demek?' cümlesi aratıldı ve elementler eklenmedi."
-    }
 
     let _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent;
     let extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";
@@ -387,7 +375,7 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
     parent.appendChild(contentWrapper);
 }
 
-function ContextMenuHandler(message) {
+function contextMenuHandler(message) {
     let word = message.word;
 
     if (message.searchEngine == "tdk") {
@@ -400,7 +388,7 @@ function ContextMenuHandler(message) {
         input_google.value = word;
     }
 
-    Search(word, message.searchEngine);
+    search(word, message.searchEngine);
 }
 
 function changeView(searchEngine) {
@@ -424,7 +412,7 @@ function clearTextFields() {
     google_result_div.textContent = "";
 }
 
-async function Search(word, searchEngine, searchAfterPopupOpen = false) {
+async function search(word, searchEngine, searchAfterPopupOpen = false) {
     if (!word)
         return;
 
@@ -438,10 +426,10 @@ async function Search(word, searchEngine, searchAfterPopupOpen = false) {
 
     let result = await browser.runtime.sendMessage({
         word: word,
-        type: "Search",
+        type: "search",
         searchEngine: _searchEngine
     }).catch(err => {
-        console.error("Search -> Error: " + err);
+        console.error("search -> Error: " + err);
     });
 
     if (!result)
@@ -470,21 +458,20 @@ async function Search(word, searchEngine, searchAfterPopupOpen = false) {
 }
 
 async function portOnMessage(message) {
-    if (message.type == "SearchFromContextMenu")
-        ContextMenuHandler(message);
-    else if (message.type == "PopupConnectedToBackground") {
+    if (message.type == "search_from_context_menu")
+        contextMenuHandler(message);
+    else if (message.type == "popup_connected_to_background") {
         if (settings["searchSelectedTextOnPopupShow"] === true) {
             const selectedText = await getSelectedTextOnActiveTab();
-    
+
             if (selectedText == "")
                 return;
 
             const searchEngine = settings["default"];
 
-            Search(selectedText, searchEngine, true);
+            search(selectedText, searchEngine, true);
         }
     }
-
 }
 
 initialize();

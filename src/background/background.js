@@ -17,23 +17,22 @@ let popupPort = null;
 
 //Sends meaning of the word that came from context menu.
 function sendContextMenuSelectedTextToTab(info, tab) {
-    browser.tabs.sendMessage(tab.id, { type: "SearchFromContextMenu", word: info.selectionText.trim().toLocaleLowerCase(), isContextMenu: true });
+    browser.tabs.sendMessage(tab.id, { type: "search_from_context_menu", word: info.selectionText.trim().toLocaleLowerCase(), isContextMenu: true });
 }
 
 //async olursa browserAction acilmiyor.
-function ContextMenuClicked(info, tab) {
+function contextMenuClicked(info, tab) {
     if (info.menuItemId == "cm_onpopup") {
         isWaitingForThePopupToLoadToSendAWord = true;
 
-        objectToBeSentToPopupWhenLoaded = { word: info.selectionText.trim(), type: "SearchFromContextMenu", searchEngine: settings["default"] };
+        objectToBeSentToPopupWhenLoaded = { word: info.selectionText.trim(), type: "search_from_context_menu", searchEngine: settings["default"] };
 
         browser.browserAction.openPopup();
     } else if (info.menuItemId == "cm_onpage")
         sendContextMenuSelectedTextToTab(info, tab);
 }
 
-function createContextMenuEntries()
-{
+function createContextMenuEntries() {
     let parentContextMenuOptions = {
         id: "ContextMenuParent",
         title: "Seçili kelimeyi çevir",
@@ -41,28 +40,28 @@ function createContextMenuEntries()
         // throws error in chrome. "Unexpected property: 'icons'."
         icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
     };
-    
+
     try {
         browser.contextMenus.create(parentContextMenuOptions);
     } catch (hata) {
         delete parentContextMenuOptions.icons;
-    
+
         try {
             browser.contextMenus.create(parentContextMenuOptions);
-    
+
             console.debug("Successfully created context menu !");
         } catch (error) {
             console.error(error);
         }
     }
-    
+
     browser.contextMenus.create({
         id: "cm_onpage",
         parentId: "ContextMenuParent",
         title: "Sayfa üzerinde",
         contexts: ["selection"]
     });
-    
+
     browser.contextMenus.create({
         id: "cm_onpopup",
         parentId: "ContextMenuParent",
@@ -76,7 +75,7 @@ function updateSettings(e) {
         settings[key] = e[key].newValue;
 }
 
-async function SearchFromTDK(message) {
+async function searchFromTDK(message) {
     let word = message.word ?? message;
 
     let response = await fetch("https://sozluk.gov.tr/gts?ara=" + word, {
@@ -147,7 +146,7 @@ async function SearchFromTDK(message) {
 }
 
 //Sadece 2 cumleye ulasabiliyoruz.
-async function SearchFromGoogle(word) {
+async function searchFromGoogle(word) {
     //"https://www.google.com/search?q=" + word + "+ne+demek"
 
     let response = await fetch("https://www.google.com/search?q=" + word + "+ne+demek", {
@@ -165,20 +164,20 @@ async function SearchFromGoogle(word) {
     return { type: "response_from_google", doc: await response.text() };
 }
 
-async function Search(message, sender) {
+async function search(message, sender) {
     if (message == null)
         return;
 
     let _searchEngine = message.searchEngine ?? settings["default"];
 
-    if (_searchEngine === "tdk") return await SearchFromTDK(message, sender);
-    else if (_searchEngine === "google") return await SearchFromGoogle(message.word);
+    if (_searchEngine === "tdk") return await searchFromTDK(message, sender);
+    else if (_searchEngine === "google") return await searchFromGoogle(message.word);
     else return;
 }
 
 async function onMessage(message, sender) {
-    if (message.type === "Search")
-        return Promise.resolve(Search(message, sender));
+    if (message.type === "search")
+        return Promise.resolve(search(message, sender));
 }
 
 function onConnect(port) {
@@ -201,7 +200,7 @@ function onConnect(port) {
         }
         else {
             popupPort.postMessage({
-                type: "PopupConnectedToBackground"
+                type: "popup_connected_to_background"
             });
         }
 
@@ -224,6 +223,6 @@ browser.runtime.onMessage.addListener(onMessage);
 
 browser.storage.onChanged.addListener(updateSettings);
 
-browser.contextMenus.onClicked.addListener(ContextMenuClicked);
+browser.contextMenus.onClicked.addListener(contextMenuClicked);
 
 createContextMenuEntries();

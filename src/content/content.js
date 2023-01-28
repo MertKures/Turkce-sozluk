@@ -86,8 +86,6 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
                 createElement("br", 1)
             ] : null;
 
-            //let _similarWord = meaningElement.parentElement?.querySelector('div[class^="vmod"]')?.querySelector('div[class*="vmod"]')?.querySelector('div')?.textContent ?? "";
-
             let _similarWord;
 
             meaningElement.parentElement?.querySelectorAll('div[class^="vmod"]')?.forEach(p => {
@@ -97,7 +95,6 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
                     return;
             });
 
-            // _similarWord = ?.querySelector('div[class*="vmod"]')?.querySelector('div')?.textContent ?? "";
             let similarWord = (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:')) ? _similarWord.substring(_similarWord.toLocaleLowerCase().indexOf("benzer:")) : "";
 
             let similarWordElements;
@@ -117,25 +114,6 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
                 similarWordElements,
                 createElement("br", 2)
             );
-
-            // if (extraInfoBeforeExample) {
-            //     addElements(contentWrapper,
-            //         createElement("b", 1, { textContent: extraInfoBeforeExample, style: "font-size: 0.75em" }),
-            //         createElement("br", 1),
-            //         createElement("span", 1,
-            //             {
-            //                 textContent: meaningCounter.toString() + ")" + meaningElement.textContent
-            //             }),
-            //         createElement("br", 2));
-            // }
-            // else {
-            //     addElements(contentWrapper,
-            //         createElement("span", 1,
-            //             {
-            //                 textContent: meaningCounter.toString() + ")" + meaningElement.textContent
-            //             }),
-            //         createElement("br", 2));
-            // }
 
             let exampleElement = meaningElement.nextElementSibling?.className === "vmod" ? meaningElement.nextElementSibling : null;
 
@@ -463,11 +441,11 @@ function initializeDialog(message) {
 
 function onMessage(message) {
     if (!message) return;
-    else if (message.type === "SearchFromContextMenu") { deleteAllElements(); Search(message); return; }
+    else if (message.type === "search_from_context_menu") { deleteAllElements(); search(message); return; }
     else if (message.type === "getSelectedText") return Promise.resolve(selectedText);
 }
 
-async function Search(message, Ex, Ey) {
+async function search(message, Ex, Ey) {
     let parameterIsJustWord = message.word ? false : true;
     let word;
     let newObjects = {};
@@ -487,9 +465,9 @@ async function Search(message, Ex, Ey) {
 
     let result = await browser.runtime.sendMessage({
         word: word,
-        type: "Search"
+        type: "search"
     }).catch(err => {
-        console.error("Search -> Error: " + err);
+        console.error("search -> Error: " + err);
     });
 
     if (!result)
@@ -600,7 +578,7 @@ async function window_onmouseup(e) {
 
     if (!modifiersArePressed) return;
 
-    Search(wordObj.word, e.clientX, e.clientY);
+    search(wordObj.word, e.clientX, e.clientY);
 }
 
 window.addEventListener("mouseup", window_onmouseup);

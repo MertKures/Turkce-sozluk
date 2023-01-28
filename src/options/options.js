@@ -123,7 +123,7 @@ function modifierSelectOnInput(e) {
     Save();
 }
 
-function searchEngineSelectOnInput(e) {
+function searchEngineSelect_OnInput(e) {
     Save();
 }
 
@@ -171,7 +171,7 @@ function getSaveObjects() {
     return objects;
 }
 
-function searchSelectedTextOnPopupShowInputOnInput(e) {
+function searchSelectedTextOnPopupShowInput_OnInput(e) {
     Save();
 }
 
@@ -192,10 +192,10 @@ async function initialize() {
     addModifierButton = document.getElementById("addModifierButton");
 
     searchEngineSelect = document.getElementById("searchEngineSelect");
-    searchEngineSelect.oninput = searchEngineSelectOnInput;
+    searchEngineSelect.oninput = searchEngineSelect_OnInput;
 
     searchSelectedTextOnPopupShowInput = document.getElementById("searchSelectedTextOnPopupShowInput");
-    searchSelectedTextOnPopupShowInput.oninput = searchSelectedTextOnPopupShowInputOnInput;
+    searchSelectedTextOnPopupShowInput.oninput = searchSelectedTextOnPopupShowInput_OnInput;
 
     loadModifierSelectElementsFromSettings(settings.modifiers);
 

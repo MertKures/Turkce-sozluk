@@ -4,8 +4,8 @@ let settings = getDefaultSettings();
 //#region TEST
 initializeSettings()
     .then(_settings => settings = _settings)
-    // TEST: [Search after popup open]: Select appropriate settigns to true.
-    .then(async (obj) => {
+    // TEST: [Search after popup open]: Select appropriate settings to true.
+    .then(async () => {
         await browser.storage.local.set({ "searchSelectedTextOnPopupShow": true });
         settings.searchSelectedTextOnPopupShow = true;
     });
@@ -20,7 +20,7 @@ function sendContextMenuSelectedTextToTab(info, tab) {
     browser.tabs.sendMessage(tab.id, { type: "SearchFromContextMenu", word: info.selectionText.trim().toLocaleLowerCase(), isContextMenu: true });
 }
 
-//async olursa browserAction açılmıyor.
+//async olursa browserAction acilmiyor.
 function ContextMenuClicked(info, tab) {
     if (info.menuItemId == "cm_onpopup") {
         isWaitingForThePopupToLoadToSendAWord = true;
@@ -32,42 +32,44 @@ function ContextMenuClicked(info, tab) {
         sendContextMenuSelectedTextToTab(info, tab);
 }
 
-let parentContextMenuOptions = {
-    id: "ContextMenuParent",
-    title: "Seçili kelimeyi çevir",
-    contexts: ["selection"],
-    // throws error in chrome. "Unexpected property: 'icons'."
-    icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
-};
-
-try {
-    browser.contextMenus.create(parentContextMenuOptions);
-} catch (hata) {
-    delete parentContextMenuOptions.icons;
-
+function createContextMenuEntries()
+{
+    let parentContextMenuOptions = {
+        id: "ContextMenuParent",
+        title: "Seçili kelimeyi çevir",
+        contexts: ["selection"],
+        // throws error in chrome. "Unexpected property: 'icons'."
+        icons: { "32": browser.runtime.getURL("icons/32/icon.png") }
+    };
+    
     try {
         browser.contextMenus.create(parentContextMenuOptions);
-
-        console.debug("Successfully created context menu !");
-    } catch (error) {
-        console.error(error);
+    } catch (hata) {
+        delete parentContextMenuOptions.icons;
+    
+        try {
+            browser.contextMenus.create(parentContextMenuOptions);
+    
+            console.debug("Successfully created context menu !");
+        } catch (error) {
+            console.error(error);
+        }
     }
-
+    
+    browser.contextMenus.create({
+        id: "cm_onpage",
+        parentId: "ContextMenuParent",
+        title: "Sayfa üzerinde",
+        contexts: ["selection"]
+    });
+    
+    browser.contextMenus.create({
+        id: "cm_onpopup",
+        parentId: "ContextMenuParent",
+        title: "Uzantı üzerinde",
+        contexts: ["selection"]
+    });
 }
-
-browser.contextMenus.create({
-    id: "cm_onpage",
-    parentId: "ContextMenuParent",
-    title: "Sayfa üzerinde",
-    contexts: ["selection"]
-});
-
-browser.contextMenus.create({
-    id: "cm_onpopup",
-    parentId: "ContextMenuParent",
-    title: "Uzantı üzerinde",
-    contexts: ["selection"]
-});
 
 function updateSettings(e) {
     for (const key in e)
@@ -144,7 +146,7 @@ async function SearchFromTDK(message) {
     };
 }
 
-//Sadece 2 cümleye ulasabiliyoruz.
+//Sadece 2 cumleye ulasabiliyoruz.
 async function SearchFromGoogle(word) {
     //"https://www.google.com/search?q=" + word + "+ne+demek"
 
@@ -223,3 +225,5 @@ browser.runtime.onMessage.addListener(onMessage);
 browser.storage.onChanged.addListener(updateSettings);
 
 browser.contextMenus.onClicked.addListener(ContextMenuClicked);
+
+createContextMenuEntries();

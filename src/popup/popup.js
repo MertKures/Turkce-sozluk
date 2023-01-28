@@ -426,10 +426,7 @@ function clearTextFields() {
 
 async function Search(word, searchEngine, searchAfterPopupOpen = false) {
     if (!word)
-    {
-        //console.debug("Search() - 'word' was empty.");
         return;
-    }
 
     clearTextFields();
 
@@ -448,10 +445,7 @@ async function Search(word, searchEngine, searchAfterPopupOpen = false) {
     });
 
     if (!result)
-    {
-        //console.debug("Search() - 'result' was empty.");
         return;
-    }
 
     if (result.type == "response_from_tdk") {
         if (searchAfterPopupOpen === true) {
@@ -482,10 +476,8 @@ async function portOnMessage(message) {
         if (settings["searchSelectedTextOnPopupShow"] === true) {
             const selectedText = await getSelectedTextOnActiveTab();
     
-            if (selectedText == "") {
-                //console.debug("Selected text was empty.");
+            if (selectedText == "")
                 return;
-            }
 
             const searchEngine = settings["default"];
 

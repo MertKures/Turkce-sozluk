@@ -123,7 +123,7 @@ async function searchAfterDelay() {
     else if (search_engine_google_div.hidden == false)
         input = input_google.value ?? "";
 
-    input = input.trim();
+    input = input.trim().toLocaleLowerCase();
 
     if (input == "") {
         console.debug("Input was empty.");
@@ -131,7 +131,7 @@ async function searchAfterDelay() {
     }
 
     try {
-        const comparedInput = input.toLocaleLowerCase().replace(/[^a-zA-Zçşüğöİâ ]/gi, '');
+        const comparedInput = input.replace(/[^a-zA-Zçşüğöıâ ]/g, '');
 
         if (input != comparedInput) {
             console.debug("Input had invalid characters.");

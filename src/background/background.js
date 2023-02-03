@@ -1,4 +1,5 @@
 import { getDefaultSettings, initializeSettings } from 'modules/utils.js';
+import { searchEngineList } from '../../modules/utils';
 let settings = getDefaultSettings();
 
 //#region TEST
@@ -164,15 +165,55 @@ async function searchFromGoogle(word) {
     return { type: "response_from_google", doc: await response.text() };
 }
 
-async function search(message, sender) {
+function getInformationIfTheWordHasBeenSearchedBefore(word) {
+    if (!word)
+        return;
+    
+    let index = 0;
+    for (const obj of settings.storedWords) {
+        if (obj.word === word.trim().toLocaleLowerCase())
+            return { index: index, obj: obj };
+        index++;
+    }
+}
+
+async function search(message) {
     if (message == null)
         return;
 
-    let _searchEngine = message.searchEngine ?? settings["default"];
+    const searchEngine = message.searchEngine ?? settings["default"];
 
-    if (_searchEngine === "tdk") return await searchFromTDK(message, sender);
-    else if (_searchEngine === "google") return await searchFromGoogle(message.word);
-    else return;
+    const infoObj = getInformationIfTheWordHasBeenSearchedBefore(message.word);
+    const isItSearchedBefore = infoObj ?? false;
+    const indexOfInfo = (isItSearchedBefore) ? infoObj.index : null;
+    const storedInformation = (isItSearchedBefore) ? infoObj.obj : {};
+
+    if (isItSearchedBefore && storedInformation.hasOwnProperty(searchEngine)) {
+        const info = storedInformation[searchEngine];
+
+        if (info != null)
+            return info;
+    }
+
+    const info = (searchEngine === searchEngineList.tdk)
+        ? await searchFromTDK(message)
+        : await searchFromGoogle(message.word);
+
+    if (!info)
+        return;
+
+    if (isItSearchedBefore) {
+        settings.storedWords[indexOfInfo][searchEngine] = info;
+    } else {
+        settings.storedWords.push({
+            word: message.word,
+            [searchEngine]: info
+        });
+    }
+
+    await browser.storage.local.set({ "storedWords": settings.storedWords });
+
+    return info;
 }
 
 async function onMessage(message, sender) {
@@ -211,8 +252,6 @@ function onConnect(port) {
 }
 
 function onDisconnect(port) {
-    console.debug(port, "'" + port.name + "' portuyla bağlantı koptu.", (port.error) ? "Error: " + port.error : "");
-
     if (port.name === "bA")
         popupPort = null;
 }

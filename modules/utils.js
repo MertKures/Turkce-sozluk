@@ -1,4 +1,9 @@
-export const defaultSettings = { modifiers: ["none"], default: "tdk", searchSelectedTextOnPopupShow: false };
+export const defaultSettings = {
+    modifiers: ["none"],
+    default: "tdk",
+    searchSelectedTextOnPopupShow: false,
+    storedWords: [] // {word: "word", tdk: {...}, google: {...}}
+};
 
 export const searchEngineList = { tdk: "tdk", google: "google" };
 

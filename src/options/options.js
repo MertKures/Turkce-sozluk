@@ -127,15 +127,15 @@ function searchEngineSelect_OnInput(e) {
     Save();
 }
 
-function Save() {
+async function Save() {
     console.debug("Save çağırıldı !");
 
     //Prevent user to select anything until the process is done.
     blockDiv.style.visibility = "visible";
 
-    let objects = getSaveObjects();
+    let objects = await getSaveObjects();
 
-    browser.storage.local.set(objects);
+    await browser.storage.local.set(objects);
 
     console.debug("Kaydedilen ayarlar", objects);
 
@@ -146,27 +146,25 @@ function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
 }
 
-function getSaveObjects() {
-    let objects = getDefaultSettings();
-
+async function getSaveObjects() {
+    let objects = await browser.storage.local.get();
+    
     modifierSelects = Object.values(selectDiv.getElementsByTagName("select"));
+
+    objects.modifiers = [];
 
     for (let modifierSelect of modifierSelects)
         if (modifierSelect.value)
             objects.modifiers.push(modifierSelect.value);
-        else
-            console.debug("Ayarlar kaydedilirken modifierSelect değişkenlerinden birinin \"value\" özelliği boştu.");
 
     objects.default = searchEngineSelect.value;
 
     objects.modifiers = objects.modifiers.filter(onlyUnique);
 
-    objects.searchSelectedTextOnPopupShow = searchSelectedTextOnPopupShowInput.checked;
-
-    //Modifier atanmış işe "none" değeri varsa sil.
-    if (objects.modifiers.length > 1) {
+    if (objects.modifiers.length > 1)
         objects.modifiers = objects.modifiers.filter(modifier => modifier != "none");
-    }
+
+    objects.searchSelectedTextOnPopupShow = searchSelectedTextOnPopupShowInput.checked;
 
     return objects;
 }

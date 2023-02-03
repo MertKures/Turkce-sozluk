@@ -429,7 +429,7 @@ async function search(word, searchEngine, searchAfterPopupOpen = false) {
         type: "search",
         searchEngine: _searchEngine
     }).catch(err => {
-        console.error("search -> Error: " + err);
+        console.error("search -> " + err);
     });
 
     if (!result)

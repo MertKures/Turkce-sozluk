@@ -69,7 +69,7 @@ const moduleExports = {
         content: path.resolve(__dirname, 'src/content/content.js')
     },
     //prevents csp (Content Security Policy) error in background.js by not using eval()
-    devtool: "inline-cheap-source-map",
+    devtool: 'inline-cheap-module-source-map',
     mode: 'development',
     plugins: [copyWebpackPluginOptions, cleanWebpackPluginOptions, ...htmlWebpackPluginOptions],
     module:

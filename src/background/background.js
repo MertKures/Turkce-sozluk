@@ -1,5 +1,5 @@
-import { getDefaultSettings, initializeSettings } from 'modules/utils.js';
-import { searchEngineList } from '../../modules/utils';
+import { getDefaultSettings, initializeSettings, searchEngineList } from 'modules/utils.js';
+
 let settings = getDefaultSettings();
 
 //#region TEST

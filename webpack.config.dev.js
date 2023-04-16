@@ -36,14 +36,14 @@ const htmlWebpackPluginOptions = [
         title: 'Popup',
         template: path.resolve(__dirname, 'src/popup/index.html'),
         //Only popup.js loaded to html
-        chunks: ["popup"]
+        chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
         filename: path.resolve(__dirname, 'dev/options/index.html'),
         title: 'Options',
         template: path.resolve(__dirname, 'src/options/index.html'),
         //Only options.js loaded to html
-        chunks: ["options"]
+        chunks: ['options']
     })
 ];
 
@@ -53,7 +53,7 @@ const moduleExports = {
     output: {
         path: path.resolve(__dirname, 'dev'),
         //like options/options.js ...
-        filename: "[name]/[name].js"
+        filename: '[name]/[name].js'
     },
     resolve: {
         //can be used with require('')
@@ -76,11 +76,11 @@ const moduleExports = {
     {
         rules: [
             {
-                loader: "babel-loader",
+                loader: 'babel-loader',
                 exclude: /node_modules/,
                 test: /\.js$/,
                 resolve: {
-                    extensions: [".js"]
+                    extensions: ['.js']
                 }
             }
         ]

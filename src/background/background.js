@@ -46,7 +46,6 @@ function createContextMenuEntries() {
         browser.contextMenus.create(parentContextMenuOptions);
     } catch (hata) {
         delete parentContextMenuOptions.icons;
-
         try {
             browser.contextMenus.create(parentContextMenuOptions);
 
@@ -63,12 +62,15 @@ function createContextMenuEntries() {
         contexts: ["selection"]
     });
 
-    browser.contextMenus.create({
-        id: "cm_onpopup",
-        parentId: "ContextMenuParent",
-        title: "Uzantı üzerinde",
-        contexts: ["selection"]
-    });
+    if (parentContextMenuOptions.hasOwnProperty("icons"))
+    {
+        browser.contextMenus.create({
+            id: "cm_onpopup",
+            parentId: "ContextMenuParent",
+            title: "Uzantı üzerinde",
+            contexts: ["selection"]
+        });
+    }
 }
 
 function updateSettings(e) {

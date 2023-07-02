@@ -412,22 +412,22 @@ function clearTextFields() {
     google_result_div.textContent = "";
 }
 
-async function search(word, searchEngine, searchAfterPopupOpen = false) {
+async function search(word, _searchEngine, searchAfterPopupOpen = false) {
     if (!word)
         return;
 
     clearTextFields();
 
-    let _searchEngine = searchEngine ?? "";
-    _searchEngine = _searchEngine.toLocaleLowerCase().trim();
+    let searchEngine = _searchEngine ?? "";
+    searchEngine = searchEngine.toLocaleLowerCase().trim();
 
-    if (!(_searchEngine === "tdk" || _searchEngine === "google"))
-        _searchEngine = (!search_engine_google_div.hidden || search_engine_tdk_div.hidden) ? "google" : "tdk";
+    if (!(searchEngine === "tdk" || searchEngine === "google"))
+        searchEngine = (!search_engine_google_div.hidden || search_engine_tdk_div.hidden) ? "google" : "tdk";
 
     let result = await browser.runtime.sendMessage({
         word: word,
         type: "search",
-        searchEngine: _searchEngine
+        searchEngine: searchEngine
     }).catch(err => {
         console.error("search -> " + err);
     });

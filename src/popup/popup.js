@@ -8,6 +8,7 @@ let timerStart = +new Date(),
 
 const [input_tdk, tdk_result_div, google_result_div, input_google, search_engine_google_div, search_engine_tdk_div, search_engine_google_option, search_engine_tdk_option] = ["input_tdk", "tdk_result_div", "google_result_div", "input_google", "search_engine_google_div", "search_engine_tdk_div", "search_engine_google_option", "search_engine_tdk_option"].map(id => document.getElementById(id));
 
+const SPEECH_API = new URL("https://www.google.com/speech-api/v1/synthesize?text=&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1");
 const ACTIVE_DIV_BACKGROUND_COLOR = 'rgba(80,80,80,0.9)';
 
 async function waitForDisplayThenExecuteCallback(element, root, callback) {
@@ -305,14 +306,16 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
             audio.play();
     }
 
+    SPEECH_API.searchParams.set("text", word.replace(/·/g, ''));
+    
     let audio = doc.querySelector("audio[jsname='QInZvb']");
 
     if (!audio) {
         audio = document.createElement('audio');
-        audio.src = `https://www.google.com/speech-api/v1/synthesize?text=${word.replace(/·/g, '')}&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1`;
+        audio.src = SPEECH_API.href;
     } else {
         if (!audio.src) {
-            audio.src = `https://www.google.com/speech-api/v1/synthesize?text=${word.replace(/·/g, '')}&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1`;
+            audio.src = SPEECH_API.href;
         }
     }
 

@@ -146,11 +146,11 @@ async function searchAfterDelay() {
 }
 
 function createTDKUI(message, parentElement) {
-    if (!message.word)
+    if (!parentElement)
+        throw "Parent element was not found.";
+    else if (!message.word)
         return;
-    else if (!message.anlamlarListe)
-        return;
-    else if (message.anlamlarListe.length <= 0)
+    else if (!message.anlamlarListe || message.anlamlarListe.length <= 0)
         return;
 
     let boldWordElement = createElement("b", 1, { "textContent": message.word.charAt(0).toUpperCase() + message.word.slice(1) });
@@ -277,6 +277,9 @@ function createTDKUI(message, parentElement) {
 }
 
 function createGoogleUIFromHTMLDoc(doc, parent) {
+    if (!parent)
+        throw "Parent element was not found.";
+
     let query = doc.querySelector("[data-dobid='hdw']");
 
     if (!query) {

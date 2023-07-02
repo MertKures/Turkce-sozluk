@@ -280,13 +280,17 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
     let query = doc.querySelector("[data-dobid='hdw']");
 
     if (!query) {
-        throw "Couldn't find element with data-dobid='hdw'";
+        console.error("Couldn't find element with data-dobid='hdw'");
+        return false;
     }
 
     let word = query.textContent;
 
     if (word.trim().toLocaleLowerCase() === "ne demek?")
-        throw `The word (${word}) was invalid.`;
+    {
+        console.error("The word was invalid.");
+        return false;
+    }
 
     let _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent;
     let extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";
@@ -376,6 +380,8 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
     });
 
     parent.appendChild(contentWrapper);
+
+    return true;
 }
 
 function contextMenuHandler(message) {
@@ -436,7 +442,13 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
     });
 
     if (!result)
+    {
+        if (searchEngine === "tdk")
+            tdk_result_div.textContent = "Sonuç bulunamadı !";
+        else if (searchEngine === "google")
+            google_result_div.textContent = "Sonuç bulunamadı !";
         return;
+    }
 
     if (result.type == "response_from_tdk") {
         if (searchAfterPopupOpen === true) {
@@ -446,7 +458,10 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
 
         try {
             createTDKUI(result, tdk_result_div);
-        } catch (error) { console.error(error); }
+        } catch (error) {
+            console.error(error);
+            tdk_result_div.textContent = "Hata oluştu.";
+        }
     }
     else if (result.type == "response_from_google") {
         if (searchAfterPopupOpen === true) {
@@ -455,8 +470,14 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
         }
 
         try {
-            createGoogleUIFromHTMLDoc(new DOMParser().parseFromString(result.doc, 'text/html'), google_result_div);
-        } catch (error) { console.error(error); }
+            const success = createGoogleUIFromHTMLDoc(new DOMParser().parseFromString(result.doc, 'text/html'), google_result_div);
+            
+            if (!success)
+                google_result_div.textContent = "Sonuç bulunamadı !";
+        } catch (error) {
+            console.error(error);
+            google_result_div.textContent = "Hata oluştu !";
+        }
     }
 }
 

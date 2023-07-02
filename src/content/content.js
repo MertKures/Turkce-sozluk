@@ -6,7 +6,7 @@ getSettings().then(_settings => settings = _settings);
 
 let dragDivMouseClickX,
     dragDivMouseClickY,
-    windowMouseDown,
+    dragDivMouseDown,
     dragDiv,
     boxIsMouseDown = false,
     boxMouseClickX = 0,
@@ -297,16 +297,25 @@ function initializeDialog(message) {
         //Seçili kelimeyi sildiğimizden dolayı mouse'u hareket ettirdiğimizde "Simple translate" eklentisi ekstra kutucuk çıkaramıyor.
         document.getSelection().removeAllRanges();
 
-        //Eğer context menuden gelmiş ise sürüklendiğinde left,top ve transform değerlerinden etkilenmesini engelliyor.
-        this.classList.remove("ts_boxCM");
+        let offsetX = e.clientX - this.offsetLeft;
+        let offsetY = e.clientY - this.offsetTop;
 
-        //Eğer context menuden gelmiş ise kutucuğa ilk tıklandığında kutucuğun yok olmamasını sağlıyor.
-        //left ve top değeri "calc(50%)" olduğundan classList'ten "ts_boxCM" kaldırılınca left ve top boş kalıyor ve kutucuğun yok olmasına sebep oluyordu.
-        this.style.left = (e.clientX - e.layerX) + "px";
-        this.style.top = (e.clientY - e.layerY) + "px";
+        if (this.classList.contains("ts_boxCM")) {
+            // Sürüklendiğinde left,top ve transform değerlerinden etkilenmesini engelliyor.
+            this.classList.remove("ts_boxCM");
 
-        boxMouseClickX = e.layerX;
-        boxMouseClickY = e.layerY;
+            offsetX = this.offsetWidth / 2;
+            offsetY = this.offsetHeight / 2;
+
+            // Kutucuğa ilk tıklandığında kutucuğun yok olmasını engelliyor.
+            // left ve top değeri "calc(50%)" olduğundan classList'ten "ts_boxCM" kaldırılınca
+            // left ve top boş kalıyor ve kutucuğun yok olmasına sebep oluyordu.
+            this.style.left = (e.clientX - offsetX) + "px";
+            this.style.top = (e.clientY - offsetY) + "px";
+        }
+
+        boxMouseClickX = offsetX;
+        boxMouseClickY = offsetY;
 
         boxIsMouseDown = true;
     }
@@ -372,26 +381,37 @@ function initializeDialog(message) {
 
         document.getSelection().removeAllRanges();
 
-        if (e.button == '0') {
-            dragDivMouseClickX = e.layerX;
-            dragDivMouseClickY = e.layerY;
+        if (e.button != "0")
+            return;
 
-            windowMouseDown = true;
+        let offsetX = e.clientX - this.parentElement.offsetLeft;
+        let offsetY = e.clientY - this.parentElement.offsetTop;
 
-            dragDiv = this;
-
+        if (this.parentElement.classList.contains("ts_dialogCM")) {
             //Eğer context menuden gelmiş ise sürüklendiğinde left,top ve transform değerlerinden etkilenmesini engelliyor.
             this.parentElement.classList.remove("ts_dialogCM");
 
-            //Eğer context menuden gelmiş ise tutma yerine ilk tıklandığında diyaloğun yok olmamasını sağlıyor.
-            this.parentElement.style.left = (e.clientX - e.layerX) + "px";
-            this.parentElement.style.top = (e.clientY - e.layerY) + "px";
+            const left = window.innerWidth / 2 - this.parentElement.offsetWidth / 2;
+            const top = window.innerHeight / 2 - this.parentElement.offsetHeight / 2;
+
+            this.parentElement.style.left = left + "px";
+            this.parentElement.style.top = top + "px";
+
+            offsetX = e.clientX - left;
+            offsetY = e.clientY - top;
         }
+
+        dragDivMouseClickX = offsetX;
+        dragDivMouseClickY = offsetY;
+
+        dragDiv = this;
+
+        dragDivMouseDown = true;
     };
 
     dragDiv.onmouseup = function (e) {
         e.preventDefault();
-        windowMouseDown = false;
+        dragDivMouseDown = false;
         dragDiv = null;
     };
 
@@ -553,10 +573,12 @@ async function window_onmouseup(e) {
         insideDialogOrBoxMouseUp = false;
         return;
     }
-    else deleteAllElements();
+    else
+        deleteAllElements();
 
     //Left Click
-    if (e.button !== 0) return;
+    if (e.button !== 0)
+        return;
 
     let wordObj = getSelectedTextIfThereIsNoDialog();
 
@@ -576,7 +598,8 @@ async function window_onmouseup(e) {
         console.error(error);
     }
 
-    if (!modifiersArePressed) return;
+    if (!modifiersArePressed)
+        return;
 
     search(wordObj.word, e.clientX, e.clientY);
 }
@@ -584,7 +607,7 @@ async function window_onmouseup(e) {
 window.addEventListener("mouseup", window_onmouseup);
 window.addEventListener('mousemove', function (e) {
     if (e.buttons == '1') {
-        if (dragDiv && windowMouseDown == true) {
+        if (dragDiv && dragDivMouseDown == true) {
             dragDiv.parentElement.style.left = (e.clientX - dragDivMouseClickX) + 'px';
             dragDiv.parentElement.style.top = (e.clientY - dragDivMouseClickY) + 'px';
         }

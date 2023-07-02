@@ -59,6 +59,7 @@
 
 #ts_dialog {
     border: 1px solid gray;
+    line-height: normal !important;
     /* scrollbar-color: rgb(40, 40, 40) rgb(27, 27, 27); */
     /* scrollbar-width: thin; */
     position: fixed;

@@ -156,7 +156,7 @@ function createTDKUI(message, parentElement) {
     let boldWordElement = createElement("b", 1, { "textContent": message.word.charAt(0).toUpperCase() + message.word.slice(1) });
 
     if (!boldWordElement) {
-        console.error("Kelimenin en üste yazıldığı kısımda \"b\" elementi oluşturulamadı.");
+        console.error("Couldn't create an element.");
         return;
     }
 
@@ -280,13 +280,13 @@ function createGoogleUIFromHTMLDoc(doc, parent) {
     let query = doc.querySelector("[data-dobid='hdw']");
 
     if (!query) {
-        throw "[data-dobid='hdw'] bulunamadı.";
+        throw "Couldn't find element with data-dobid='hdw'";
     }
 
     let word = query.textContent;
 
     if (word.trim().toLocaleLowerCase() === "ne demek?")
-        throw "Geçersiz kelime seçildiğinden sadece 'ne demek?' cümlesi aratıldı ve elementler eklenmedi."
+        throw `The word (${word}) was invalid.`;
 
     let _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent;
     let extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";

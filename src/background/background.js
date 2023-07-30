@@ -44,6 +44,8 @@ function createContextMenuEntries() {
 
     try {
         browser.contextMenus.create(parentContextMenuOptions);
+        
+        console.debug("Successfully created context menu !");
     } catch (hata) {
         delete parentContextMenuOptions.icons;
         try {
@@ -52,6 +54,7 @@ function createContextMenuEntries() {
             console.debug("Successfully created context menu !");
         } catch (error) {
             console.error(error);
+            return;
         }
     }
 

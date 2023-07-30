@@ -220,7 +220,7 @@ async function search(message) {
 
 async function onMessage(message, sender) {
     if (message.type === "search")
-        return Promise.resolve(search(message, sender));
+        return Promise.resolve(await search(message, sender));
 }
 
 function onConnect(port) {

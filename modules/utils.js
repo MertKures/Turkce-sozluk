@@ -8,7 +8,14 @@ export const defaultSettings = {
 export const searchEngineList = { tdk: "tdk", google: "google" };
 
 export async function getSettings() {
-    return fixSettings(await browser.storage.local.get());
+    // await browser.storage.local.get() returns an empty object if there is no data in the storage.
+    try {
+        const results = await browser.storage.local.get();
+        return fixSettings(results);
+    } catch (error) {
+        console.error(error);
+    }
+    return getDefaultSettings();
 }
 
 export function getDefaultSettings() {
@@ -26,10 +33,14 @@ export function getDefaultSettings() {
 }
 
 export async function initializeSettings() {
-    const settings = await getSettings();
+    let settings = await getSettings();
 
-    await browser.storage.local.set(settings);
-
+    try {
+        await browser.storage.local.set(settings);
+    } catch (error) {
+        console.error(error);
+        settings = getDefaultSettings();
+    }
     return settings;
 }
 

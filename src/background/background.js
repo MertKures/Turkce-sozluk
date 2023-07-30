@@ -1,17 +1,6 @@
 import { getDefaultSettings, initializeSettings, searchEngineList } from 'modules/utils.js';
 
 let settings = getDefaultSettings();
-
-//#region TEST
-initializeSettings()
-    .then(_settings => settings = _settings)
-    // TEST: [Search after popup open]: Select appropriate settings to true.
-    .then(async () => {
-        await browser.storage.local.set({ "searchSelectedTextOnPopupShow": true });
-        settings.searchSelectedTextOnPopupShow = true;
-    });
-//#endregion
-
 let isWaitingForThePopupToLoadToSendAWord = false;
 let objectToBeSentToPopupWhenLoaded = null;
 let popupPort = null;
@@ -44,7 +33,7 @@ function createContextMenuEntries() {
 
     try {
         browser.contextMenus.create(parentContextMenuOptions);
-        
+
         console.debug("Successfully created context menu !");
     } catch (hata) {
         delete parentContextMenuOptions.icons;
@@ -65,8 +54,7 @@ function createContextMenuEntries() {
         contexts: ["selection"]
     });
 
-    if (parentContextMenuOptions.hasOwnProperty("icons"))
-    {
+    if (parentContextMenuOptions.hasOwnProperty("icons")) {
         browser.contextMenus.create({
             id: "cm_onpopup",
             parentId: "ContextMenuParent",
@@ -167,13 +155,16 @@ async function searchFromGoogle(word) {
         return;
     }
 
+    // TODO: Parse the document and check if the word is in the document.
+
+
     return { type: "response_from_google", doc: await response.text() };
 }
 
 function getInformationIfTheWordHasBeenSearchedBefore(word) {
     if (!word)
         return;
-    
+
     let index = 0;
     for (const obj of settings.storedWords) {
         if (obj.word === word.trim().toLocaleLowerCase())
@@ -270,3 +261,6 @@ browser.storage.onChanged.addListener(updateSettings);
 browser.contextMenus.onClicked.addListener(contextMenuClicked);
 
 createContextMenuEntries();
+
+initializeSettings()
+    .then(_settings => settings = _settings);

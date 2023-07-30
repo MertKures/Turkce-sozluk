@@ -92,7 +92,6 @@ async function searchFromTDK(message) {
         console.error(error);
     }
 
-    //Hata oluştuysa bitir.
     if (!list) {
         console.error("list -> undefined");
         return;
@@ -104,7 +103,6 @@ async function searchFromTDK(message) {
 
     list = list[0];
 
-    //Anlam var ise devam et.
     if (parseInt(list.anlam_say) < 1) {
         console.error("Anlam listesi boştu.");
         return;

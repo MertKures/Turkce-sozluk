@@ -1,4 +1,4 @@
-import { getDefaultSettings, initializeSettings, searchEngineList } from 'modules/utils.js';
+import { getDefaultSettings, initializeSettings, searchEngineList, addElements, createElement } from 'modules/utils.js';
 
 let settings = getDefaultSettings();
 let isWaitingForThePopupToLoadToSendAWord = false;
@@ -154,9 +154,107 @@ async function searchFromGoogle(word) {
     }
 
     // TODO: Parse the document and check if the word is in the document.
+    const documentText = await response.text();
 
+    if (!documentText)
+        return;
 
-    return { type: "response_from_google", doc: await response.text() };
+    const doc = new DOMParser().parseFromString(documentText, 'text/html');
+
+    // TODO: Get everything out of the document and turn it into a JSON object. Then send it.
+    let query = doc.querySelector("[data-dobid='hdw']");
+
+    if (!query) {
+        console.error("[data-dobid='hdw'] bulunamadı.");
+        return;
+    }
+
+    const wordOnTheDocument = query.textContent;
+
+    if (wordOnTheDocument.trim().toLocaleLowerCase() === "ne demek?") {
+        console.error("Geçersiz kelime seçildiğinden sadece 'ne demek?' cümlesi aratıldı ve elementler eklenmedi.");
+        return;
+    }
+
+    const elements = {};
+
+    const _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent ?? "";
+    const extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";
+
+    let audio = doc.querySelector("audio[jsname='QInZvb']");
+
+    let meaningCounter = 0;
+
+    const contentWrapper = document.createElement('div');
+
+    doc.querySelector("ol[class='eQJLDd']").childNodes.forEach(p => {
+        try {
+            let meaningElement = p.querySelector("div[data-dobid='dfn']");
+
+            if (!meaningElement)
+                return;
+
+            meaningCounter++;
+
+            let extraInfoBeforeExample = meaningElement.parentElement?.previousElementSibling?.textContent ?? "";
+            let extraInfoBeforeExampleElements = (extraInfoBeforeExample) ? [
+                createElement("b", 1, { textContent: extraInfoBeforeExample, style: "font-size: 0.75em" }),
+                createElement("br", 1)
+            ] : null;
+
+            let _similarWord;
+
+            meaningElement.parentElement?.querySelectorAll('div[class^="vmod"]')?.forEach(p => {
+                _similarWord = p.querySelector('div[class*="vmod"]')?.querySelector('div')?.textContent ?? "";
+
+                if (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:'))
+                    return;
+            });
+
+            let similarWord = (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:')) ? _similarWord.substring(_similarWord.toLocaleLowerCase().indexOf("benzer:")) : "";
+
+            let similarWordElements;
+
+            if (similarWord)
+                similarWordElements = [
+                    createElement('br', 1),
+                    createElement('b', 1, { textContent: similarWord, className: "ts_similarWord" })
+                ];
+
+            addElements(contentWrapper,
+                extraInfoBeforeExampleElements,
+                createElement("span", 1,
+                    {
+                        textContent: meaningCounter.toString() + ")" + meaningElement.textContent
+                    }),
+                similarWordElements,
+                createElement("br", 2)
+            );
+
+            let exampleElement = meaningElement.nextElementSibling?.className === "vmod" ? meaningElement.nextElementSibling : null;
+
+            if (!exampleElement)
+                return;
+            else if (exampleElement.textContent.trim() === "")
+                return;
+
+            let boldElement = createElement("span", 1, { attributes: { style: "color:rgb(3, 138, 255)" }, "textContent": "Örnek: " });
+            let exampleSpan = createElement("b", 1, { "textContent": exampleElement.textContent });
+
+            console.debug(exampleSpan.textContent);
+
+            addElements(contentWrapper, boldElement, exampleSpan, createElement("br", 2));
+        } catch (err) {
+            console.error(err);
+        }
+    });
+
+    elements.word = word;
+    elements.extraInfoAfterWord = extraInfoAfterWord;
+    elements.audio = audio ? JSON.stringify(audio.innerHTML) : null;
+    elements.contentWrapper = JSON.stringify(contentWrapper.innerHTML);
+
+    return { type: "response_from_google", elements: elements };
 }
 
 function getInformationIfTheWordHasBeenSearchedBefore(word) {

@@ -1,4 +1,4 @@
-import { addElements, createElement, getSettings, getDefaultSettings } from 'modules/utils.js';
+import { addElements, createElement, getSettings, getDefaultSettings, createGoogleUIFromHTMLDoc } from 'modules/utils.js';
 
 let settings = getDefaultSettings();
 
@@ -16,123 +16,6 @@ let dragDivMouseClickX,
     boxIsBeingDragged = true,
     insideDialogOrBoxMouseUp = false,
     selectedText = "";
-
-//Google çeviri için kullanılacak "doc" parametresi background_scriptten gelecek.
-function createGoogleUIFromHTMLDoc(doc, parent) {
-    let query = doc.querySelector("[data-dobid='hdw']");
-
-    if (!query) {
-        throw "[data-dobid='hdw'] bulunamadı.";
-    }
-
-    let word = query.textContent;
-
-    if (word.trim().toLocaleLowerCase() === "ne demek?") {
-        throw "Geçersiz kelime seçildiğinden sadece 'ne demek?' cümlesi aratıldı ve elementler eklenmedi."
-    }
-
-    let _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent ?? "";
-    let extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";
-
-    addElements(parent, createElement("b", 1, { textContent: word.toUpperCase() + extraInfoAfterWord }));
-
-    addElements(parent, createElement("br", 2));
-
-    let icon = document.createElement('img');
-    icon.style.width = "24px";
-    icon.style.height = "24px";
-    icon.src = browser.runtime.getURL("/icons/hoparlor.png");
-
-    icon.onclick = function () {
-        let audio = this.getElementsByTagName('audio')[0];
-        if (audio)
-            audio.play();
-    }
-
-    let audio = doc.querySelector("audio[jsname='QInZvb']");
-
-    if (!audio) {
-        audio = document.createElement('audio');
-        audio.src = `https://www.google.com/speech-api/v1/synthesize?text=${word.replace(/·/g, '')}&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1`;
-    } else {
-        if (!audio.src) {
-            audio.src = `https://www.google.com/speech-api/v1/synthesize?text=${word.replace(/·/g, '')}&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1`;
-        }
-    }
-
-    icon.appendChild(audio);
-
-    parent.appendChild(icon);
-
-    addElements(parent, createElement("br", 2));
-
-    let contentWrapper = document.createElement('div');
-    contentWrapper.style.width = parent.style.width;
-
-    let meaningCounter = 0;
-
-    doc.querySelector("ol[class='eQJLDd']").childNodes.forEach(p => {
-        try {
-            let meaningElement = p.querySelector("div[data-dobid='dfn']");
-
-            if (!meaningElement)
-                return;
-
-            meaningCounter++;
-
-            let extraInfoBeforeExample = meaningElement.parentElement?.previousElementSibling?.textContent ?? "";
-            let extraInfoBeforeExampleElements = (extraInfoBeforeExample) ? [
-                createElement("b", 1, { textContent: extraInfoBeforeExample, style: "font-size: 0.75em" }),
-                createElement("br", 1)
-            ] : null;
-
-            let _similarWord;
-
-            meaningElement.parentElement?.querySelectorAll('div[class^="vmod"]')?.forEach(p => {
-                _similarWord = p.querySelector('div[class*="vmod"]')?.querySelector('div')?.textContent ?? "";
-
-                if (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:'))
-                    return;
-            });
-
-            let similarWord = (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:')) ? _similarWord.substring(_similarWord.toLocaleLowerCase().indexOf("benzer:")) : "";
-
-            let similarWordElements;
-
-            if (similarWord)
-                similarWordElements = [
-                    createElement('br', 1),
-                    createElement('b', 1, { textContent: similarWord, className: "ts_similarWord" })
-                ];
-
-            addElements(contentWrapper,
-                extraInfoBeforeExampleElements,
-                createElement("span", 1,
-                    {
-                        textContent: meaningCounter.toString() + ")" + meaningElement.textContent
-                    }),
-                similarWordElements,
-                createElement("br", 2)
-            );
-
-            let exampleElement = meaningElement.nextElementSibling?.className === "vmod" ? meaningElement.nextElementSibling : null;
-
-            if (!exampleElement)
-                return;
-            else if (exampleElement.textContent.trim() === "")
-                return;
-
-            let boldElement = createElement("span", 1, { attributes: { style: "color:rgb(3, 138, 255)" }, "textContent": "Örnek: " });
-            let exampleSpan = createElement("b", 1, { "textContent": exampleElement.textContent });
-
-            addElements(contentWrapper, boldElement, exampleSpan, createElement("br", 2));
-        } catch (err) {
-            console.error(err);
-        }
-    });
-
-    parent.appendChild(contentWrapper);
-}
 
 function createTDKUI(message, parentElement) {
     //console.debug(message);
@@ -506,7 +389,7 @@ async function search(message, Ex, Ey) {
     }
     else if (result.type == "response_from_google") {
         try {
-            createGoogleUIFromHTMLDoc(new DOMParser().parseFromString(newResult.doc, 'text/html'), paragraphElement);
+            createGoogleUIFromHTMLDoc(newResult.elements, paragraphElement);
         } catch (error) {
             deleteAllElements();
             return;

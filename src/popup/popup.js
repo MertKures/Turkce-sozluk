@@ -1,4 +1,4 @@
-import { getSettings, createElement, addElements, getDefaultSettings, getSelectedTextOnActiveTab, searchEngineList } from 'modules/utils.js';
+import { getSettings, createElement, addElements, getDefaultSettings, getSelectedTextOnActiveTab, searchEngineList, createGoogleUIFromHTMLDoc } from 'modules/utils.js';
 
 let settings = getDefaultSettings();
 
@@ -276,117 +276,6 @@ function createTDKUI(message, parentElement) {
     }
 }
 
-function createGoogleUIFromHTMLDoc(doc, parent) {
-    if (!parent)
-        throw "Parent element was not found.";
-
-    let query = doc.querySelector("[data-dobid='hdw']");
-
-    if (!query) {
-        console.error("Couldn't find element with data-dobid='hdw'");
-        return false;
-    }
-
-    let word = query.textContent;
-
-    if (word.trim().toLocaleLowerCase() === "ne demek?")
-    {
-        console.error("The word was invalid.");
-        return false;
-    }
-
-    let _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent;
-    let extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";
-
-    addElements(parent, createElement("b", 1, { textContent: word.toUpperCase() + extraInfoAfterWord }));
-
-    addElements(parent, createElement("br", 2));
-
-    let icon = document.createElement('img');
-    icon.style.width = "24px";
-    icon.style.height = "24px";
-    icon.src = browser.runtime.getURL("/icons/hoparlor.png");
-
-    icon.onclick = function () {
-        let audio = this.getElementsByTagName('audio')[0];
-        if (audio)
-            audio.play();
-    }
-
-    SPEECH_API.searchParams.set("text", word.replace(/·/g, ''));
-    
-    let audio = doc.querySelector("audio[jsname='QInZvb']");
-
-    if (!audio) {
-        audio = document.createElement('audio');
-        audio.src = SPEECH_API.href;
-    } else {
-        if (!audio.src) {
-            audio.src = SPEECH_API.href;
-        }
-    }
-
-    icon.appendChild(audio);
-
-    parent.appendChild(icon);
-
-    addElements(parent, createElement("br", 2));
-
-    let contentWrapper = document.createElement('div');
-    contentWrapper.style.width = parent.style.width;
-
-    let meaningCounter = 0;
-
-    doc.querySelector("ol[class='eQJLDd']").childNodes.forEach(p => {
-        try {
-            let meaningElement = p.querySelector("div[data-dobid='dfn']");
-
-            if (!meaningElement)
-                return;
-
-            meaningCounter++;
-
-            let extraInfoBeforeExample = meaningElement.parentElement?.previousElementSibling?.textContent ?? "";
-
-            let exampleElement = meaningElement.nextElementSibling?.className === "vmod" ? meaningElement.nextElementSibling : null;
-
-            if (extraInfoBeforeExample)
-                addElements(contentWrapper,
-                    createElement("b", 1, { textContent: extraInfoBeforeExample, style: "font-size: 0.75em" }),
-                    createElement("br", 1),
-                    createElement("span", 1,
-                        {
-                            textContent: meaningCounter.toString() + ")" + meaningElement.textContent
-                        }),
-                    createElement("br", 2));
-
-            else
-                addElements(contentWrapper,
-                    createElement("span", 1,
-                        {
-                            textContent: meaningCounter.toString() + ")" + meaningElement.textContent
-                        }),
-                    createElement("br", 2));
-
-            if (!exampleElement)
-                return;
-            else if (exampleElement.textContent.trim() === "")
-                return;
-
-            let boldElement = createElement("span", 1, { attributes: { style: "color:rgb(3, 138, 255)" }, "textContent": "Örnek: " });
-            let exampleSpan = createElement("b", 1, { "textContent": exampleElement.textContent });
-
-            addElements(contentWrapper, boldElement, exampleSpan, createElement("br", 2));
-        } catch (err) {
-            console.error(err);
-        }
-    });
-
-    parent.appendChild(contentWrapper);
-
-    return true;
-}
-
 function contextMenuHandler(message) {
     let word = message.word;
 
@@ -473,7 +362,7 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
         }
 
         try {
-            const success = createGoogleUIFromHTMLDoc(new DOMParser().parseFromString(result.doc, 'text/html'), google_result_div);
+            const success = createGoogleUIFromHTMLDoc(result.elements, google_result_div);
             
             if (!success)
                 google_result_div.textContent = "Sonuç bulunamadı !";

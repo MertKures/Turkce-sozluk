@@ -206,3 +206,77 @@ export async function getSelectedTextOnActiveTab() {
 
     return text ?? "";
 }
+
+export function createGoogleUIFromHTMLDoc(elements, parent) {
+    let word = elements.word;
+    let extraInfoAfterWord = elements.extraInfoAfterWord;
+
+    addElements(parent, createElement("b", 1, { textContent: word.toUpperCase() + extraInfoAfterWord }));
+    addElements(parent, createElement("br", 2));
+
+    let icon = document.createElement('img');
+    icon.style.width = "24px";
+    icon.style.height = "24px";
+    icon.src = browser.runtime.getURL("/icons/hoparlor.png");
+
+    icon.onclick = function () {
+        let audio = this.getElementsByTagName('audio')[0];
+        if (audio)
+            audio.play();
+    }
+
+    let audio = elements.audio;
+
+    function initializeAudio() {
+        audio = document.createElement('audio');
+        audio.src = `https://www.google.com/speech-api/v1/synthesize?text=${word.replace(/·/g, '')}&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1`;
+    }
+
+    if (!audio) {
+        initializeAudio();
+    } else {
+        let audioInnerHtml;
+
+        try {
+            audioInnerHtml = JSON.parse(audio).trim();
+        } catch (error) {
+            console.warn(error);
+        }
+
+        if (audioInnerHtml === "" || audioInnerHtml == null) {
+            initializeAudio();
+        }
+        else {
+            audio = document.createElement("audio");
+            audio.innerHTML = audioInnerHtml;
+            if (!audio.src)
+                audio.src = `https://www.google.com/speech-api/v1/synthesize?text=${word.replace(/·/g, '')}&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1`;
+        }
+    }
+
+    icon.appendChild(audio);
+
+    parent.appendChild(icon);
+
+    addElements(parent, createElement("br", 2));
+
+    let contentWrapperInnerHtml = elements.contentWrapper;
+
+    try {
+        contentWrapperInnerHtml = JSON.parse(contentWrapperInnerHtml).trim();
+
+        if (contentWrapperInnerHtml === "")
+            throw "Content wrapper element was empty. Couldn't create element.";
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+
+    let contentWrapper = document.createElement("div");
+    contentWrapper.innerHTML = contentWrapperInnerHtml;
+    contentWrapper.style.width = parent.style.width;
+
+    parent.appendChild(contentWrapper);
+
+    return true;
+}

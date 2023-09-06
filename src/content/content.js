@@ -162,11 +162,12 @@ function initializeDialog(message) {
     boxDiv.className = "ts_boxDivAnimation";
 
     if (message.isContextMenu == true) {
-        boxDiv.classList.add("ts_boxCM");
+        boxDiv.style.top = (window.innerHeight / 2 - 17) + "px";
+        boxDiv.style.left = (window.innerWidth / 2 - 17) + "px";
     }
     else {
-        boxDiv.style.left = (message.x - 10) + "px";
-        boxDiv.style.top = (message.y + 10) + "px";
+        boxDiv.style.left = (message.x - 14) + "px";
+        boxDiv.style.top = (message.y + 17) + "px";
     }
 
     boxDiv.onanimationend = function () {

@@ -37,8 +37,8 @@
 }
 
 #ts_box {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     position: fixed;
     cursor: pointer;
     z-index: 2147483647;
@@ -51,7 +51,7 @@
 }
 
 .ts_boxImg {
-    width: 66.6%;
+    width: 24px;
     border-radius: 2px;
     margin: 0;
     padding: 0;
@@ -78,12 +78,6 @@
 .ts_dialogCM {
     left: calc(50%);
     top: calc(50%);
-    transform: translate(-50%, -50%);
-}
-
-.ts_boxCM {
-    left: calc(50% - 10px);
-    top: calc(50% + 10px);
     transform: translate(-50%, -50%);
 }
 

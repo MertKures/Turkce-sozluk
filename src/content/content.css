@@ -1,37 +1,37 @@
-@keyframes animation1 {
+@keyframes boxImageAnimation {
     from {
         width: 1px;
         height: 1px;
     }
     50% {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
     to {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
     }
 }
 
-@keyframes animation2 {
+@keyframes boxDivAnimation {
     from {
         width: 1px;
         height: 1px;
     }
     to {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
     }
 }
 
 .ts_boxImgAnimation {
-    animation-name: animation1;
+    animation-name: boxImageAnimation;
     animation-iteration-count: 1;
     animation-duration: 0.25s;
 }
 
 .ts_boxDivAnimation {
-    animation-name: animation2;
+    animation-name: boxDivAnimation;
     animation-iteration-count: 1;
     animation-duration: 0.20s;
 }

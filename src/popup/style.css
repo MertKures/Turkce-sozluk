@@ -65,6 +65,8 @@ body {
     height: 40px;
     color: white;
     text-align: center;
+    cursor: default;
+    user-select: none;
 }
 
 #search_engine_tdk_option:hover,

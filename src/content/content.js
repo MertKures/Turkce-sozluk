@@ -250,7 +250,9 @@ function initializeDialog(message) {
     }
 
     if (message.isContextMenu == true) {
-        dialog.classList.add("ts_dialogCM");
+        // dialog.classList.add("ts_dialogCM");
+        dialog.style.top = Math.round(window.innerHeight / 2 - 150) + "px";
+        dialog.style.left = Math.round(window.innerWidth / 2 - 110) + "px";
     }
     else {
         dialog.style.left = message.x + "px";
@@ -271,19 +273,19 @@ function initializeDialog(message) {
         let offsetX = e.clientX - this.parentElement.offsetLeft;
         let offsetY = e.clientY - this.parentElement.offsetTop;
 
-        if (this.parentElement.classList.contains("ts_dialogCM")) {
-            //Eğer context menuden gelmiş ise sürüklendiğinde left,top ve transform değerlerinden etkilenmesini engelliyor.
-            this.parentElement.classList.remove("ts_dialogCM");
+        // if (this.parentElement.classList.contains("ts_dialogCM")) {
+        //     //Eğer context menuden gelmiş ise sürüklendiğinde left,top ve transform değerlerinden etkilenmesini engelliyor.
+        //     this.parentElement.classList.remove("ts_dialogCM");
 
-            const left = window.innerWidth / 2 - this.parentElement.offsetWidth / 2;
-            const top = window.innerHeight / 2 - this.parentElement.offsetHeight / 2;
+        //     const left = window.innerWidth / 2 - this.parentElement.offsetWidth / 2;
+        //     const top = window.innerHeight / 2 - this.parentElement.offsetHeight / 2;
 
-            this.parentElement.style.left = left + "px";
-            this.parentElement.style.top = top + "px";
+        //     this.parentElement.style.left = left + "px";
+        //     this.parentElement.style.top = top + "px";
 
-            offsetX = e.clientX - left;
-            offsetY = e.clientY - top;
-        }
+        //     offsetX = e.clientX - left;
+        //     offsetY = e.clientY - top;
+        // }
 
         dragDivMouseClickX = offsetX;
         dragDivMouseClickY = offsetY;
@@ -492,8 +494,8 @@ window.addEventListener("mouseup", window_onmouseup);
 window.addEventListener('mousemove', function (e) {
     if (e.buttons == '1') {
         if (dragDiv && dragDivMouseDown == true) {
-            dragDiv.parentElement.style.left = (e.clientX - dragDivMouseClickX) + 'px';
-            dragDiv.parentElement.style.top = (e.clientY - dragDivMouseClickY) + 'px';
+            dragDiv.parentElement.style.left = Math.round(e.clientX - dragDivMouseClickX) + "px";
+            dragDiv.parentElement.style.top = Math.round(e.clientY - dragDivMouseClickY) + "px";
         }
 
         if (boxDiv && boxIsMouseDown == true) {

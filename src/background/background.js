@@ -153,7 +153,6 @@ async function searchFromGoogle(word) {
         return;
     }
 
-    // TODO: Parse the document and check if the word is in the document.
     const documentText = await response.text();
 
     if (!documentText)
@@ -161,7 +160,6 @@ async function searchFromGoogle(word) {
 
     const doc = new DOMParser().parseFromString(documentText, 'text/html');
 
-    // TODO: Get everything out of the document and turn it into a JSON object. Then send it.
     let query = doc.querySelector("[data-dobid='hdw']");
 
     if (!query) {

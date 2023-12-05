@@ -7,35 +7,33 @@ body {
     font: menu;
 }
 
-#Kelime {
+.word {
     color: antiquewhite;
-    width: 60px;
-    height: 14px;
+    /* width: 60px; */
+    /* height: 14px; */
     font-size: 12px;
 }
 
-#Anlam {
+.meaning {
     color: antiquewhite;
-    width: 60px;
-    height: 14px;
+    /* width: 60px; */
+    /* height: 14px; */
     font-size: 12px;
 }
 
-#ickisim {
+.content {
     width: 300px;
-}
-
-#icerik {
     margin-left: 20px;
 }
 
-#icerikKapsayici {
+.content_wrapper {
     width: 340px;
     height: 205px;
     border: 1px solid white;
+    border-top: none;
 }
 
-#cevirilecekTA {
+#input_tdk {
     background-color: rgb(30, 30, 30);
     color: antiquewhite;
     resize: none;
@@ -44,7 +42,7 @@ body {
     height: 25px;
 }
 
-#cevirilenAlan {
+.search_engine_result_div {
     margin-top: 5px;
     background-color: rgb(30, 30, 30);
     color: antiquewhite;
@@ -54,66 +52,48 @@ body {
     overflow-y: auto;
 }
 
-#SecenekKapsayici {
+#search_engines {
     width: 340px;
     height: 40px;
     display: flex;
     border: 1px solid white;
 }
 
-#TDK,
-#Google {
+#search_engine_tdk_option,
+#search_engine_google_option {
     width: 170px;
     height: 40px;
     color: white;
     text-align: center;
+    cursor: default;
+    user-select: none;
 }
 
-#TDK:hover,
-#Google:hover {
-    background-color: rgb(92, 91, 86);
+#search_engine_tdk_option:hover,
+#search_engine_google_option:hover {
+    background-color: rgb(60,60,60,1);
 }
 
-#Sınır {
-    width: 2px;
-    height: 40px;
+#search_engine_seperator {
+    width: 1px;
     background-color: white;
 }
 
-#GoogleKapsayici,
-#TDKKapsayici {
+#search_engine_google_div,
+#search_engine_tdk_div {
     position: absolute;
 }
 
-#gicerik {
-    width: 340px;
-    height: 205px;
+.border-div {
+    border: 1px solid white;
+    border-top: none;
 }
 
-#gcevirilecekTA {
+#input_google {
     background-color: rgb(30, 30, 30);
     color: antiquewhite;
     resize: none;
     border: none;
     width: 300px;
     height: 25px;
-}
-
-#gcevirilecekTAKapsayici {
-    margin-left: 20px;
-    margin-top: 5px;
-}
-
-#gcevirilenAlan {
-    height: calc(100% - 60px);
-    width: 300px;
-    margin-left: 20px;
-    background-color: aliceblue;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-#gKelime,
-#gAnlamı {
-    color: white;
 }

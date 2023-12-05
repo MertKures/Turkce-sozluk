@@ -1,44 +1,44 @@
-@keyframes animasyon1 {
+@keyframes boxImageAnimation {
     from {
         width: 1px;
         height: 1px;
     }
     50% {
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
     }
     to {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
     }
 }
 
-@keyframes animasyon2 {
+@keyframes boxDivAnimation {
     from {
         width: 1px;
         height: 1px;
     }
     to {
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
     }
 }
 
-.ts_kutucukImgAnimasyon {
-    animation-name: animasyon1;
+.ts_boxImgAnimation {
+    animation-name: boxImageAnimation;
     animation-iteration-count: 1;
     animation-duration: 0.25s;
 }
 
-.ts_kutucukDivAnimasyon {
-    animation-name: animasyon2;
+.ts_boxDivAnimation {
+    animation-name: boxDivAnimation;
     animation-iteration-count: 1;
     animation-duration: 0.20s;
 }
 
-#ts_kutucuk {
-    width: 30px;
-    height: 30px;
+#ts_box {
+    width: 32px;
+    height: 32px;
     position: fixed;
     cursor: pointer;
     z-index: 2147483647;
@@ -50,8 +50,8 @@
     align-items: center;
 }
 
-.ts_kutucukResmi {
-    width: 66.6%;
+.ts_boxImg {
+    width: 24px;
     border-radius: 2px;
     margin: 0;
     padding: 0;
@@ -59,17 +59,20 @@
 
 #ts_dialog {
     border: 1px solid gray;
-    scrollbar-color: rgb(40, 40, 40) rgb(27, 27, 27);
-    scrollbar-width: thin;
+    line-height: normal !important;
+    /* scrollbar-color: rgb(40, 40, 40) rgb(27, 27, 27); */
+    /* scrollbar-width: thin; */
     position: fixed;
     display: block;
     z-index: 2147483646;
     width: 300px;
     height: 220px;
-    font-family: Gill Sans, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
-    border-radius: 1em 1em 1em 1em;
-    line-height: 1em;
+    border-radius: 1em 1em 0em 1em;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 .ts_dialogCM {
@@ -78,13 +81,7 @@
     transform: translate(-50%, -50%);
 }
 
-.ts_kutucukCM {
-    left: calc(50% - 10px);
-    top: calc(50% + 10px);
-    transform: translate(-50%, -50%);
-}
-
-.ts_kaydirma_cubugu {
+.ts_dragDiv {
     background-color: #1B1B1B;
     height: 9%;
     width: 100%;
@@ -94,8 +91,8 @@
     border-radius: 1em 1em 0em 0em;
 }
 
-.ts_bilgiDiv {
-    scrollbar-width: thin;
+.ts_infoWrapper {
+    /* scrollbar-width: thin; */
     width: 100%;
     height: 91%;
     background-color: #141414;
@@ -103,10 +100,22 @@
     display: inline-block;
     overflow: auto;
     overscroll-behavior: contain;
-    border-radius: 0em 0em 1em 1em;
+    border-radius: 0em 0em 0em 1em;
 }
 
-.ts_kapamaTusu {
+.ts_infoWrapper::-webkit-scrollbar {
+    width: 1em;
+}
+
+.ts_infoWrapper::-webkit-scrollbar-thumb {
+    background-color: #282828;
+}
+
+.ts_infoWrapper::-webkit-scrollbar-track {
+    background-color: #1b1b1b;
+}
+
+.ts_closeButton {
     width: 10%;
     cursor: default;
     height: 100%;
@@ -116,12 +125,19 @@
     border-radius: 0.1em 1em 0.1em 0.1em;
 }
 
-.ts_kapamaTusu:hover {
+.ts_closeButton:hover {
     background-color: red;
 }
 
-.P_Anlamyeri {
+.ts_info {
     text-align: left !important;
     margin: 0;
     padding: 0;
+    padding-right: 1em;
+    line-height: normal !important;
+}
+
+.ts_similarWord {
+    font-size: 0.75em;
+    color: gray;
 }

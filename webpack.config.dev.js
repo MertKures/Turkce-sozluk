@@ -36,14 +36,14 @@ const htmlWebpackPluginOptions = [
         title: 'Popup',
         template: path.resolve(__dirname, 'src/popup/index.html'),
         //Only popup.js loaded to html
-        chunks: ["popup"]
+        chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
         filename: path.resolve(__dirname, 'dev/options/index.html'),
         title: 'Options',
         template: path.resolve(__dirname, 'src/options/index.html'),
         //Only options.js loaded to html
-        chunks: ["options"]
+        chunks: ['options']
     })
 ];
 
@@ -53,11 +53,14 @@ const moduleExports = {
     output: {
         path: path.resolve(__dirname, 'dev'),
         //like options/options.js ...
-        filename: "[name]/[name].js"
+        filename: '[name]/[name].js'
     },
     resolve: {
         //can be used with require('')
-        modules: [path.resolve(__dirname, 'modules/utils.js')]
+        modules: [path.resolve(__dirname, 'modules/utils.js')],
+        alias: {
+            'modules/utils.js': path.resolve(__dirname, 'modules/utils.js')
+        }
     },
     entry: {
         options: path.resolve(__dirname, 'src/options/options.js'),
@@ -66,18 +69,18 @@ const moduleExports = {
         content: path.resolve(__dirname, 'src/content/content.js')
     },
     //prevents csp (Content Security Policy) error in background.js by not using eval()
-    devtool: "source-map",
+    devtool: 'inline-cheap-module-source-map',
     mode: 'development',
     plugins: [copyWebpackPluginOptions, cleanWebpackPluginOptions, ...htmlWebpackPluginOptions],
     module:
     {
         rules: [
             {
-                loader: "babel-loader",
+                loader: 'babel-loader',
                 exclude: /node_modules/,
                 test: /\.js$/,
                 resolve: {
-                    extensions: [".js"]
+                    extensions: ['.js']
                 }
             }
         ]

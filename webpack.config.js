@@ -3,21 +3,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const htmlWebpackMinifyProperty = {
-    html5: true,
-    collapseWhitespace: true,
-    minifyCSS: true,
-    minifyJS: true,
-    minifyURLs: false,
-    removeComments: true, // false for Vue SSR to find app placeholder
-    removeEmptyAttributes: true,
-    removeRedundantAttributes: true,
-    removeScriptTypeAttributes: true,
-    removeStyleLinkTypeAttributese: true,
-    useShortDoctype: true,
-    caseSensitive: true
-};
-
 //relative to context (src) folder
 const copyWebpackPluginOptions = new CopyWebpackPlugin({
     patterns: [
@@ -51,29 +36,31 @@ const htmlWebpackPluginOptions = [
         title: 'Popup',
         template: path.resolve(__dirname, 'src/popup/index.html'),
         //Only popup.js loaded to html
-        chunks: ["popup"],
-        minify: htmlWebpackMinifyProperty
+        chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
         filename: path.resolve(__dirname, 'dist/options/index.html'),
         title: 'Options',
         template: path.resolve(__dirname, 'src/options/index.html'),
         //Only options.js loaded to html
-        chunks: ["options"],
-        minify: htmlWebpackMinifyProperty
+        chunks: ['options']
     })
 ];
 
 const moduleExports = {
+    stats: { errorDetails: true },
     context: path.resolve(__dirname, 'src'),
     output: {
         path: path.resolve(__dirname, 'dist'),
         //like options/options.js ...
-        filename: "[name]/[name].js"
+        filename: '[name]/[name].js'
     },
     resolve: {
         //can be used with require('')
-        modules: [path.resolve(__dirname, 'modules/utils.js')]
+        modules: [path.resolve(__dirname, 'modules/utils.js')],
+        alias: {
+            'modules/utils.js': path.resolve(__dirname, 'modules/utils.js')
+        }
     },
     entry: {
         options: path.resolve(__dirname, 'src/options/options.js'),
@@ -81,17 +68,19 @@ const moduleExports = {
         background: path.resolve(__dirname, 'src/background/background.js'),
         content: path.resolve(__dirname, 'src/content/content.js')
     },
+    //prevents csp (Content Security Policy) error in background.js by not using eval()
+    // devtool: 'inline-cheap-module-source-map',
     mode: 'production',
     plugins: [copyWebpackPluginOptions, cleanWebpackPluginOptions, ...htmlWebpackPluginOptions],
     module:
     {
         rules: [
             {
-                loader: "babel-loader",
+                loader: 'babel-loader',
                 exclude: /node_modules/,
                 test: /\.js$/,
                 resolve: {
-                    extensions: [".js"]
+                    extensions: ['.js']
                 }
             }
         ]

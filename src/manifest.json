@@ -1,6 +1,6 @@
 {
   "author": "MERT KURES",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Turkce sozluk",
   "description": "Istediginiz kelimenin anlamina cift tiklama ile bakin.",
   "version": "1.7.0",
@@ -10,15 +10,14 @@
     "64": "icons/64/icon.png"
   },
   "options_ui": {
-    "page": "./options/index.html",
-    "browser_style": true,
-    "chrome_style": true
+    "page": "./options/index.html"
   },
   "background": {
     "scripts": [
       "browser-polyfill.min.js",
       "background/background.js"
-    ]
+    ],
+    "type": "module"
   },
   "content_scripts": [
     {
@@ -35,7 +34,7 @@
       ]
     }
   ],
-  "browser_action": {
+  "action": {
     "default_icon": {
       "64": "icons/64/icon.png"
     },
@@ -48,12 +47,21 @@
     }
   },
   "web_accessible_resources": [
-    "icons/64/icon.png",
-    "icons/hoparlor.png"
+    {
+      "resources": [
+        "icons/64/icon.png",
+        "icons/hoparlor.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ],
   "permissions": [
-    "https://www.google.com/",
     "contextMenus",
     "storage"
+  ],
+  "host_permissions": [
+    "https://www.google.com/"
   ]
 }

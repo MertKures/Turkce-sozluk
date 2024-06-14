@@ -1,6 +1,6 @@
-import { getDefaultSettings, initializeSettings, searchEngineList, addElements, createElement } from 'modules/utils.js';
+import { getSettings, getDefaultSettings, searchEngineList, addElements, createElement } from 'modules/utils.js';
 
-let settings = getDefaultSettings();
+let settings;
 let isWaitingForThePopupToLoadToSendAWord = false;
 let objectToBeSentToPopupWhenLoaded = null;
 let popupPort = null;
@@ -17,7 +17,7 @@ function contextMenuClicked(info, tab) {
 
         objectToBeSentToPopupWhenLoaded = { word: info.selectionText.trim(), type: "search_from_context_menu", searchEngine: settings["default"] };
 
-        browser.browserAction.openPopup();
+        browser.action.openPopup();
     } else if (info.menuItemId == "cm_onpage")
         sendContextMenuSelectedTextToTab(info, tab);
 }
@@ -306,7 +306,24 @@ async function search(message) {
     return info;
 }
 
+async function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function onMessage(message, sender) {
+    let counter = 0;
+    const TIMEOUT = 1000;
+
+    while (settings == null) {
+        await wait(100);
+        counter += 100;
+
+        if (counter >= TIMEOUT) {
+            console.error("Settings is null.");
+            return;
+        }
+    }
+
     if (message.type === "search")
         return Promise.resolve(await search(message, sender));
 }
@@ -354,7 +371,10 @@ browser.storage.onChanged.addListener(updateSettings);
 
 browser.contextMenus.onClicked.addListener(contextMenuClicked);
 
-createContextMenuEntries();
+browser.runtime.onInstalled.addListener(async details => {
+    createContextMenuEntries();
+});
 
-initializeSettings()
-    .then(_settings => settings = _settings);
+getSettings().then(s => {
+    settings = s;
+});

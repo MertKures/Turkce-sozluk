@@ -5,3 +5,5 @@ node_modules
 dist/
 extension-package/
 dev/
+dist-chrome/
+dev-chrome/

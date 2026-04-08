@@ -17,7 +17,7 @@ function contextMenuClicked(info, tab) {
 
         objectToBeSentToPopupWhenLoaded = { word: info.selectionText.trim(), type: "search_from_context_menu", searchEngine: settings["default"] };
 
-        browser.browserAction.openPopup();
+        browser.action.openPopup();
     } else if (info.menuItemId == "cm_onpage")
         sendContextMenuSelectedTextToTab(info, tab);
 }
@@ -137,124 +137,6 @@ async function searchFromTDK(message) {
     };
 }
 
-//Sadece 2 cumleye ulasabiliyoruz.
-async function searchFromGoogle(word) {
-    //"https://www.google.com/search?q=" + word + "+ne+demek"
-
-    let response = await fetch("https://www.google.com/search?q=" + word + "+ne+demek", {
-        method: 'GET',
-        credentials: 'omit'
-    }).catch(err => { console.error(err) });
-
-    if (!response)
-        return;
-    else if (!response.ok) {
-        console.error("Word: " + word, "Result: " + response.status + " " + response.statusText);
-        return;
-    }
-
-    const documentText = await response.text();
-
-    if (!documentText)
-        return;
-
-    const doc = new DOMParser().parseFromString(documentText, 'text/html');
-
-    let query = doc.querySelector("[data-dobid='hdw']");
-
-    if (!query) {
-        console.error("[data-dobid='hdw'] bulunamadı.");
-        return;
-    }
-
-    const wordOnTheDocument = query.textContent;
-
-    if (wordOnTheDocument.trim().toLocaleLowerCase() === "ne demek?") {
-        console.error("Geçersiz kelime seçildiğinden sadece 'ne demek?' cümlesi aratıldı ve elementler eklenmedi.");
-        return;
-    }
-
-    const elements = {};
-
-    const _extraInfoAfterWord = doc.querySelector("ol[class='eQJLDd']").previousElementSibling?.textContent ?? "";
-    const extraInfoAfterWord = (_extraInfoAfterWord) ? ' •' + _extraInfoAfterWord : "";
-
-    let audio = doc.querySelector("audio[jsname='QInZvb']");
-
-    let meaningCounter = 0;
-
-    const contentWrapper = document.createElement('div');
-
-    doc.querySelector("ol[class='eQJLDd']").childNodes.forEach(p => {
-        try {
-            let meaningElement = p.querySelector("div[data-dobid='dfn']");
-
-            if (!meaningElement)
-                return;
-
-            meaningCounter++;
-
-            let extraInfoBeforeExample = meaningElement.parentElement?.previousElementSibling?.textContent ?? "";
-            let extraInfoBeforeExampleElements = (extraInfoBeforeExample) ? [
-                createElement("b", 1, { textContent: extraInfoBeforeExample, style: "font-size: 0.75em" }),
-                createElement("br", 1)
-            ] : null;
-
-            let _similarWord;
-
-            meaningElement.parentElement?.querySelectorAll('div[class^="vmod"]')?.forEach(p => {
-                _similarWord = p.querySelector('div[class*="vmod"]')?.querySelector('div')?.textContent ?? "";
-
-                if (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:'))
-                    return;
-            });
-
-            let similarWord = (_similarWord && _similarWord.toLocaleLowerCase().includes('benzer:')) ? _similarWord.substring(_similarWord.toLocaleLowerCase().indexOf("benzer:")) : "";
-
-            let similarWordElements;
-
-            if (similarWord)
-                similarWordElements = [
-                    createElement('br', 1),
-                    createElement('b', 1, { textContent: similarWord, className: "ts_similarWord" })
-                ];
-
-            addElements(contentWrapper,
-                extraInfoBeforeExampleElements,
-                createElement("span", 1,
-                    {
-                        textContent: meaningCounter.toString() + ")" + meaningElement.textContent
-                    }),
-                similarWordElements,
-                createElement("br", 2)
-            );
-
-            let exampleElement = meaningElement.nextElementSibling?.className === "vmod" ? meaningElement.nextElementSibling : null;
-
-            if (!exampleElement)
-                return;
-            else if (exampleElement.textContent.trim() === "")
-                return;
-
-            let boldElement = createElement("span", 1, { attributes: { style: "color:rgb(3, 138, 255)" }, "textContent": "Örnek: " });
-            let exampleSpan = createElement("b", 1, { "textContent": exampleElement.textContent });
-
-            console.debug(exampleSpan.textContent);
-
-            addElements(contentWrapper, boldElement, exampleSpan, createElement("br", 2));
-        } catch (err) {
-            console.error(err);
-        }
-    });
-
-    elements.word = word;
-    elements.extraInfoAfterWord = extraInfoAfterWord;
-    elements.audio = audio ? JSON.stringify(audio.innerHTML) : null;
-    elements.contentWrapper = JSON.stringify(contentWrapper.innerHTML);
-
-    return { type: "response_from_google", elements: elements };
-}
-
 function getInformationIfTheWordHasBeenSearchedBefore(word) {
     if (!word)
         return;
@@ -271,33 +153,29 @@ async function search(message) {
     if (message == null)
         return;
 
-    const searchEngine = message.searchEngine ?? settings["default"];
-
     const infoObj = getInformationIfTheWordHasBeenSearchedBefore(message.word);
     const isItSearchedBefore = infoObj ?? false;
     const indexOfInfo = (isItSearchedBefore) ? infoObj.index : null;
     const storedInformation = (isItSearchedBefore) ? infoObj.obj : {};
 
-    if (isItSearchedBefore && storedInformation.hasOwnProperty(searchEngine)) {
-        const info = storedInformation[searchEngine];
+    if (isItSearchedBefore && storedInformation.hasOwnProperty(searchEngineList.tdk)) {
+        const info = storedInformation[searchEngineList.tdk];
 
         if (info != null)
             return info;
     }
 
-    const info = (searchEngine === searchEngineList.tdk)
-        ? await searchFromTDK(message)
-        : await searchFromGoogle(message.word);
+    const info = await searchFromTDK(message);
 
     if (!info)
         return;
 
     if (isItSearchedBefore) {
-        settings.storedWords[indexOfInfo][searchEngine] = info;
+        settings.storedWords[indexOfInfo][searchEngineList.tdk] = info;
     } else {
         settings.storedWords.push({
             word: message.word,
-            [searchEngine]: info
+            [searchEngineList.tdk]: info
         });
     }
 

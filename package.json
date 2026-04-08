@@ -1,13 +1,16 @@
 {
   "name": "turkce-sozluk",
-  "version": "1.0.0",
+  "version": "1.8.0",
   "description": "Kelimelerin anlamlarını ister çift tıklayarak ister basılı tutup seçerek gösteren uzantı.",
   "main": "src/manifest.json",
   "scripts": {
     "watch": "webpack --config ./webpack.config.dev.js --watch",
-    "build-dev": "webpack --config ./webpack.config.dev.js --stats-error-details",
     "build": "webpack --config ./webpack.config.js",
+    "build-dev": "webpack --config ./webpack.config.dev.js --stats-error-details",
+    "build-chrome": "webpack --config ./webpack-chrome.config.js",
+    "build-chrome-dev": "webpack --config ./webpack-chrome.config.dev.js --stats-error-details",
     "lint": "web-ext lint -s ./dist",
+    "lint-chrome": "web-ext lint -s ./dist-chrome",
     "package": "web-ext build -s ./dist -a ./extension-package/"
   },
   "repository": {
@@ -32,7 +35,7 @@
     "@babel/preset-env": "^7.20.2",
     "babel-loader": "^8.3.0",
     "clean-webpack-plugin": "^4.0.0",
-    "copy-webpack-plugin": "^11.0.0",
+    "copy-webpack-plugin": "^14.0.0",
     "html-webpack-plugin": "^5.5.0",
     "web-ext": "^0.0.1",
     "webextension-polyfill": "^0.10.0",

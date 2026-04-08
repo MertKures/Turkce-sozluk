@@ -57,7 +57,10 @@ const moduleExports = {
     },
     resolve: {
         //can be used with require('')
-        modules: [path.resolve(__dirname, 'modules/utils.js')],
+        modules: [
+            path.resolve(__dirname, 'node_modules'),
+            path.resolve(__dirname, 'modules')
+        ],
         alias: {
             'modules/utils.js': path.resolve(__dirname, 'modules/utils.js')
         }

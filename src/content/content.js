@@ -1,4 +1,4 @@
-import { addElements, createElement, getSettings, getDefaultSettings, createGoogleUIFromHTMLDoc } from 'modules/utils.js';
+import { addElements, createElement, getSettings, getDefaultSettings } from 'modules/utils.js';
 
 let settings = getDefaultSettings();
 
@@ -388,14 +388,6 @@ async function search(message, Ex, Ey) {
             createTDKUI(newResult, paragraphElement);
         } catch (error) {
             deleteAllElements();
-        }
-    }
-    else if (result.type == "response_from_google") {
-        try {
-            createGoogleUIFromHTMLDoc(newResult.elements, paragraphElement);
-        } catch (error) {
-            deleteAllElements();
-            return;
         }
     }
 }

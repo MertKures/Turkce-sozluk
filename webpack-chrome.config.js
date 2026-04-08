@@ -8,38 +8,43 @@ const copyWebpackPluginOptions = new CopyWebpackPlugin({
     patterns: [
         {
             from: './**/*',
-            to: '../dev',
+            to: '../dist-chrome',
             globOptions: {
-                ignore: ['**/node_modules/*', '**/*.html', '**/*.js']
+                ignore: ['**/node_modules/*', '**/*.html', '**/*.js', '**/manifest*.json']
             },
             toType: 'dir'
         },
         {
+            from: './manifest.chrome.json',
+            to: '../dist-chrome/manifest.json',
+            toType: 'file'
+        },
+        {
             from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
-            to: '../dev/browser-polyfill.min.js',
+            to: '../dist-chrome/browser-polyfill.min.js',
             toType: 'file'
         },
         {
             from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js.map',
-            to: '../dev/browser-polyfill.min.js.map',
+            to: '../dist-chrome/browser-polyfill.min.js.map',
             toType: 'file'
         }
     ]
 });
 
-//relative to output.path (clears 'dev' folder)
+//relative to output.path (clears 'dist-chrome' folder)
 const cleanWebpackPluginOptions = new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: './**/*' });
 
 const htmlWebpackPluginOptions = [
     new HtmlWebpackPlugin({
-        filename: path.resolve(__dirname, 'dev/popup/index.html'),
+        filename: path.resolve(__dirname, 'dist-chrome/popup/index.html'),
         title: 'Popup',
         template: path.resolve(__dirname, 'src/popup/index.html'),
         //Only popup.js loaded to html
         chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
-        filename: path.resolve(__dirname, 'dev/options/index.html'),
+        filename: path.resolve(__dirname, 'dist-chrome/options/index.html'),
         title: 'Options',
         template: path.resolve(__dirname, 'src/options/index.html'),
         //Only options.js loaded to html
@@ -51,7 +56,7 @@ const moduleExports = {
     stats: { errorDetails: true },
     context: path.resolve(__dirname, 'src'),
     output: {
-        path: path.resolve(__dirname, 'dev'),
+        path: path.resolve(__dirname, 'dist-chrome'),
         //like options/options.js ...
         filename: '[name]/[name].js'
     },
@@ -72,8 +77,8 @@ const moduleExports = {
         content: path.resolve(__dirname, 'src/content/content.js')
     },
     //prevents csp (Content Security Policy) error in background.js by not using eval()
-    devtool: 'inline-cheap-module-source-map',
-    mode: 'development',
+    // devtool: 'inline-cheap-module-source-map',
+    mode: 'production',
     plugins: [copyWebpackPluginOptions, cleanWebpackPluginOptions, ...htmlWebpackPluginOptions],
     module:
     {

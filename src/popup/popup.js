@@ -1,4 +1,4 @@
-import { getSettings, createElement, addElements, getDefaultSettings, getSelectedTextOnActiveTab, searchEngineList, createGoogleUIFromHTMLDoc } from 'modules/utils.js';
+import { getSettings, createElement, addElements, getDefaultSettings, getSelectedTextOnActiveTab, searchEngineList } from 'modules/utils.js';
 
 let settings = getDefaultSettings();
 
@@ -6,9 +6,8 @@ let timerStart = +new Date(),
     isInLoop = false,
     port;
 
-const [input_tdk, tdk_result_div, google_result_div, input_google, search_engine_google_div, search_engine_tdk_div, search_engine_google_option, search_engine_tdk_option] = ["input_tdk", "tdk_result_div", "google_result_div", "input_google", "search_engine_google_div", "search_engine_tdk_div", "search_engine_google_option", "search_engine_tdk_option"].map(id => document.getElementById(id));
+const [input_tdk, tdk_result_div, search_engine_tdk_div, search_engine_tdk_option] = ["input_tdk", "tdk_result_div", "search_engine_tdk_div", "search_engine_tdk_option"].map(id => document.getElementById(id));
 
-const SPEECH_API = new URL("https://www.google.com/speech-api/v1/synthesize?text=&enc=mpeg&lang=tr&speed=0.4&client=lr-language-tts&use_google_only_voices=1");
 const ACTIVE_DIV_BACKGROUND_COLOR = 'rgba(80,80,80,0.9)';
 
 async function waitForDisplayThenExecuteCallback(element, root, callback) {
@@ -49,41 +48,10 @@ async function initialize() {
         }
     }
 
-    input_google.oninput = function () {
-        if (!input_google.value?.trim()) {
-            google_result_div.textContent = "";
-        }
-        if (isInLoop == true) {
-            timerStart = +new Date();
-        } else {
-            timerStart = +new Date();
-            searchAfterDelay();
-        }
-    };
-
-    search_engine_google_div.hidden = true;
-
     search_engine_tdk_option.style.backgroundColor = ACTIVE_DIV_BACKGROUND_COLOR;
 
-    search_engine_google_option.onclick = async () => {
-        search_engine_tdk_div.hidden = true;
-        search_engine_google_option.style.backgroundColor = ACTIVE_DIV_BACKGROUND_COLOR;
-        search_engine_tdk_option.style.backgroundColor = "";
-
-        waitForDisplayThenExecuteCallback(input_google, search_engine_google_div, () => {
-            // Focus input element.
-
-            input_google.focus({ focusVisible: true });
-        });
-
-        // This will trigger observer, then focus the input element.
-        search_engine_google_div.hidden = false;
-    };
-
     search_engine_tdk_option.onclick = () => {
-        search_engine_google_div.hidden = true;
         search_engine_tdk_option.style.backgroundColor = ACTIVE_DIV_BACKGROUND_COLOR;
-        search_engine_google_option.style.backgroundColor = "";
 
         waitForDisplayThenExecuteCallback(input_tdk, search_engine_tdk_div, () => {
             // Focus input element.
@@ -103,8 +71,6 @@ async function initialize() {
 
     if (settings["default"] == searchEngineList.tdk)
         input_tdk.focus({ focusVisible: true });
-    else
-        input_google.focus({ focusVisible: true });
 }
 
 async function searchAfterDelay() {
@@ -117,12 +83,7 @@ async function searchAfterDelay() {
 
     isInLoop = false;
 
-    let input;
-
-    if (search_engine_tdk_div.hidden == false)
-        input = input_tdk.value ?? "";
-    else if (search_engine_google_div.hidden == false)
-        input = input_google.value ?? "";
+    let input = input_tdk.value ?? "";
 
     input = input.trim().toLocaleLowerCase();
 
@@ -132,9 +93,10 @@ async function searchAfterDelay() {
     }
 
     try {
-        const comparedInput = input.replace(/[^a-zA-Zçşüğöıâ ]/g, '');
+        // Sadece Türkçe/Latin harfler ve boşluk içeriyor mu kontrol et
+        const validCharactersOnly = /^[a-zA-ZçşüğöıâÇŞÜĞÖİÂ\s]*$/.test(input_tdk.value.trim());
 
-        if (input != comparedInput) {
+        if (!validCharactersOnly) {
             console.debug("Input had invalid characters.");
             return;
         }
@@ -283,10 +245,6 @@ function contextMenuHandler(message) {
         search_engine_tdk_option.click();
 
         input_tdk.value = word;
-    } else if (message.searchEngine == "google") {
-        search_engine_google_option.click();
-
-        input_google.value = word;
     }
 
     search(word, message.searchEngine);
@@ -295,22 +253,12 @@ function contextMenuHandler(message) {
 function changeView(searchEngine) {
     if (searchEngine === searchEngineList.tdk)
         search_engine_tdk_option.click();
-    else if (searchEngine === searchEngineList.google)
-        search_engine_google_option.click();
     else
         console.debug("[changeView()] Invalid parameter ignored.");
 }
 
 function clearTextFields() {
-    let activeElement = (!search_engine_google_div.hidden || search_engine_tdk_div.hidden) ? input_google : input_tdk;
-
-    if (activeElement == input_google)
-        input_tdk.value = "";
-    else if (activeElement == input_tdk)
-        input_google.value = "";
-
     tdk_result_div.textContent = "";
-    google_result_div.textContent = "";
 }
 
 async function search(word, _searchEngine, searchAfterPopupOpen = false) {
@@ -322,8 +270,8 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
     let searchEngine = _searchEngine ?? "";
     searchEngine = searchEngine.toLocaleLowerCase().trim();
 
-    if (!(searchEngine === "tdk" || searchEngine === "google"))
-        searchEngine = (!search_engine_google_div.hidden || search_engine_tdk_div.hidden) ? "google" : "tdk";
+    if (!(searchEngine === "tdk"))
+        searchEngine = "tdk";
 
     let result = await browser.runtime.sendMessage({
         word: word,
@@ -335,10 +283,7 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
 
     if (!result)
     {
-        if (searchEngine === "tdk")
-            tdk_result_div.textContent = "Sonuç bulunamadı !";
-        else if (searchEngine === "google")
-            google_result_div.textContent = "Sonuç bulunamadı !";
+        tdk_result_div.textContent = "Sonuç bulunamadı !";
         return;
     }
 
@@ -353,22 +298,6 @@ async function search(word, _searchEngine, searchAfterPopupOpen = false) {
         } catch (error) {
             console.error(error);
             tdk_result_div.textContent = "Hata oluştu.";
-        }
-    }
-    else if (result.type == "response_from_google") {
-        if (searchAfterPopupOpen === true) {
-            input_google.value = word; // This doesn't invoke oninput event, so it's not going to search the word again.
-            changeView(searchEngineList.google);
-        }
-
-        try {
-            const success = createGoogleUIFromHTMLDoc(result.elements, google_result_div);
-            
-            if (!success)
-                google_result_div.textContent = "Sonuç bulunamadı !";
-        } catch (error) {
-            console.error(error);
-            google_result_div.textContent = "Hata oluştu !";
         }
     }
 }

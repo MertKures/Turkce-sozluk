@@ -8,38 +8,43 @@ const copyWebpackPluginOptions = new CopyWebpackPlugin({
     patterns: [
         {
             from: './**/*',
-            to: '../dev',
+            to: '../dev-chrome',
             globOptions: {
-                ignore: ['**/node_modules/*', '**/*.html', '**/*.js']
+                ignore: ['**/node_modules/*', '**/*.html', '**/*.js', '**/manifest*.json']
             },
             toType: 'dir'
         },
         {
+            from: './manifest.chrome.json',
+            to: '../dev-chrome/manifest.json',
+            toType: 'file'
+        },
+        {
             from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js',
-            to: '../dev/browser-polyfill.min.js',
+            to: '../dev-chrome/browser-polyfill.min.js',
             toType: 'file'
         },
         {
             from: '../node_modules/webextension-polyfill/dist/browser-polyfill.min.js.map',
-            to: '../dev/browser-polyfill.min.js.map',
+            to: '../dev-chrome/browser-polyfill.min.js.map',
             toType: 'file'
         }
     ]
 });
 
-//relative to output.path (clears 'dev' folder)
+//relative to output.path (clears 'dev-chrome' folder)
 const cleanWebpackPluginOptions = new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: './**/*' });
 
 const htmlWebpackPluginOptions = [
     new HtmlWebpackPlugin({
-        filename: path.resolve(__dirname, 'dev/popup/index.html'),
+        filename: path.resolve(__dirname, 'dev-chrome/popup/index.html'),
         title: 'Popup',
         template: path.resolve(__dirname, 'src/popup/index.html'),
         //Only popup.js loaded to html
         chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
-        filename: path.resolve(__dirname, 'dev/options/index.html'),
+        filename: path.resolve(__dirname, 'dev-chrome/options/index.html'),
         title: 'Options',
         template: path.resolve(__dirname, 'src/options/index.html'),
         //Only options.js loaded to html
@@ -51,7 +56,7 @@ const moduleExports = {
     stats: { errorDetails: true },
     context: path.resolve(__dirname, 'src'),
     output: {
-        path: path.resolve(__dirname, 'dev'),
+        path: path.resolve(__dirname, 'dev-chrome'),
         //like options/options.js ...
         filename: '[name]/[name].js'
     },

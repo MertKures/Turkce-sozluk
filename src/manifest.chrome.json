@@ -13,10 +13,7 @@
     "page": "./options/index.html"
   },
   "background": {
-    "scripts": [
-      "browser-polyfill.min.js",
-      "background/background.js"
-    ]
+    "service_worker": "background/background.js"
   },
   "content_scripts": [
     {

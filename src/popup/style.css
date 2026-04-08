@@ -59,27 +59,21 @@ body {
     border: 1px solid white;
 }
 
-#search_engine_tdk_option,
-#search_engine_google_option {
-    width: 170px;
+#search_engine_tdk_option {
+    flex: 1;
     height: 40px;
     color: white;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: default;
     user-select: none;
 }
 
-#search_engine_tdk_option:hover,
-#search_engine_google_option:hover {
+#search_engine_tdk_option:hover {
     background-color: rgb(60,60,60,1);
 }
 
-#search_engine_seperator {
-    width: 1px;
-    background-color: white;
-}
-
-#search_engine_google_div,
 #search_engine_tdk_div {
     position: absolute;
 }
@@ -87,13 +81,4 @@ body {
 .border-div {
     border: 1px solid white;
     border-top: none;
-}
-
-#input_google {
-    background-color: rgb(30, 30, 30);
-    color: antiquewhite;
-    resize: none;
-    border: none;
-    width: 300px;
-    height: 25px;
 }

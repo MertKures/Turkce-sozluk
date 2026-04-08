@@ -1,0 +1,1 @@
+Türkçe Sözlük uzantısı hiçbir kişisel bilgi toplamaz. Arama geçmişi ve ayarlar yalnızca tarayıcıda yerel olarak depolanır. TDK API'ne yapılan istekler temel kelime arama işlemi için gereklidir.

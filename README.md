@@ -1,4 +1,3 @@
 # Turkce-sozluk
- Firefox için yapılmış türkçe sözlük eklentisi.
 
-Çift tıklanarak veya seçilerek alınan kelimelerin Google veya TDK sitelerinden anlamlarını ve örneklerini gösterir.
+Firefox için yapılmış türkçe sözlük eklentisidir. Çift tıklanarak veya seçilerek alınan kelimelerin TDK'nin sitesinden anlamlarını ve örneklerini gösterir.
